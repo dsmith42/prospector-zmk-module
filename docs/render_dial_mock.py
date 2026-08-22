@@ -150,10 +150,14 @@ def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=Fal
 
     o.append(f'<text x="10" y="{PANEL_H-6}" font-family="{sans}" font-size="20" '
              f'fill="{mod_on}">{layer}</text>')
-    for i, (flag, name) in enumerate((("G", "CMD"), ("A", "OPT"), ("C", "CTL"), ("S", "SFT"))):
-        o.append(f'<text x="{PANEL_W-10-(3-i)*40}" y="{PANEL_H-6}" text-anchor="end" '
-                 f'font-family="{sans}" font-size="20" font-weight="600" '
-                 f'fill="{mod_on if flag in mods else mod_off}">{name}</text>')
+    # The firmware draws private-use glyphs from the bundled Symbols font, which
+    # cannot be reproduced here — these Unicode equivalents are indicative of
+    # position and state, not of the exact shapes on the panel.
+    for i, (flag, glyph) in enumerate((("G", "\u2318"), ("A", "\u2325"),
+                                       ("C", "\u2303"), ("S", "\u21e7"))):
+        o.append(f'<text x="{PANEL_W-10-(3-i)*32}" y="{PANEL_H-4}" text-anchor="end" '
+                 f'font-family="{sans}" font-size="24" '
+                 f'fill="{mod_on if flag in mods else mod_off}">{glyph}</text>')
 
     o.append("</svg>")
     return "\n".join(o)

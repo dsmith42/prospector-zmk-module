@@ -15,6 +15,7 @@
 #include <zmk/ble.h>
 
 #include <fonts.h>
+#include <symbols.h>
 #include "display_colors.h"
 
 /* Below this the numeral turns red. Text colour only — no badge, no background,
@@ -198,12 +199,16 @@ int zmk_widget_status_text_init(struct zmk_widget_status_text *widget, lv_obj_t 
     widget->layer_label = make_label(widget->obj, &FG_Medium_20, DISPLAY_COLOR_MOD_ACTIVE,
                                      "", LV_ALIGN_BOTTOM_LEFT, 10, -6);
 
-    static const char *const mod_names[STATUS_MOD_COUNT] = {"CMD", "OPT", "CTL", "SFT"};
+    /* Glyphs rather than CMD/OPT/CTL/SFT: a symbol is recognised without being
+     * read, which is what the rest of this screen is built around. They are
+     * also narrower, so the row tightens from a 40px pitch to 32px. */
+    static const char *const mod_glyphs[STATUS_MOD_COUNT] = {
+        SYMBOL_COMMAND, SYMBOL_OPTION, SYMBOL_CONTROL, SYMBOL_SHIFT};
     for (int i = 0; i < STATUS_MOD_COUNT; i++) {
-        widget->mods[i] = make_label(widget->obj, &DINishCondensed_SemiBold_20,
-                                     DISPLAY_COLOR_MOD_INACTIVE, mod_names[i],
+        widget->mods[i] = make_label(widget->obj, &Symbols_Regular_28,
+                                     DISPLAY_COLOR_MOD_INACTIVE, mod_glyphs[i],
                                      LV_ALIGN_BOTTOM_RIGHT,
-                                     -10 - (STATUS_MOD_COUNT - 1 - i) * 40, -6);
+                                     -10 - (STATUS_MOD_COUNT - 1 - i) * 32, -2);
     }
 
     sys_slist_append(&widgets, &widget->node);

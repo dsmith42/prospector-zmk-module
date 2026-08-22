@@ -22,8 +22,8 @@
 <text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
 <text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
 <text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#b1e5f0">BASE</text>
-<text x="150" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">CMD</text>
-<text x="190" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">OPT</text>
-<text x="230" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">CTL</text>
-<text x="270" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">SFT</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="24" fill="#3b527c">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="24" fill="#3b527c">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="24" fill="#3b527c">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="24" fill="#3b527c">⇧</text>
 </svg>
