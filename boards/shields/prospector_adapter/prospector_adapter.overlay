@@ -3,15 +3,6 @@
       zephyr,display = &st7789;
    };
 
-   behaviors {
-      /* Focus-block timer. Param is the block length in minutes; 0 stops.
-         Bind as e.g. `&blk 30` to start a 30 minute block, `&blk 0` to stop. */
-      blk: block_timer {
-         compatible = "zmk,behavior-block-timer";
-         #binding-cells = <1>;
-      };
-   };
-
    prospector_green_theme: prospector_green_theme {
       compatible = "zmk,prospector-theme";
       left-panel-bg = <0x0D2C26>;
