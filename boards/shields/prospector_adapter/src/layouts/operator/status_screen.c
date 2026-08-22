@@ -1,7 +1,7 @@
 #include <lvgl.h>
 
 #include "modifier_indicator.h"
-#include "wpm_meter.h"
+#include "timer_meter.h"
 #include "layer_display.h"
 #include "battery_circles.h"
 #include "output.h"
@@ -9,7 +9,7 @@
 #include <fonts.h>
 
 static struct zmk_widget_modifier_indicator modifier_indicator_widget;
-static struct zmk_widget_wpm_meter wpm_meter_widget;
+static struct zmk_widget_timer_meter timer_meter_widget;
 static struct zmk_widget_layer_display layer_display_widget;
 static struct zmk_widget_battery_circles battery_circles_widget;
 static struct zmk_widget_output output_widget;
@@ -22,8 +22,8 @@ lv_obj_t *zmk_display_status_screen() {
     zmk_widget_modifier_indicator_init(&modifier_indicator_widget, screen);
     lv_obj_set_pos(zmk_widget_modifier_indicator_obj(&modifier_indicator_widget), 25, 8);
 
-    zmk_widget_wpm_meter_init(&wpm_meter_widget, screen);
-    lv_obj_set_pos(zmk_widget_wpm_meter_obj(&wpm_meter_widget), 10, 42);
+    zmk_widget_timer_meter_init(&timer_meter_widget, screen);
+    lv_obj_set_pos(zmk_widget_timer_meter_obj(&timer_meter_widget), 10, 42);
 
     zmk_widget_layer_display_init(&layer_display_widget, screen);
     lv_obj_set_pos(zmk_widget_layer_display_obj(&layer_display_widget), 10, 142);

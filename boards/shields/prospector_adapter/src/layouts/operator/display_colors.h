@@ -5,9 +5,13 @@
 #define DISPLAY_COLOR_MOD_SEPARATOR    0x606060
 #define DISPLAY_COLOR_MOD_CAPS_WORD    0xffbf00
 
-#define DISPLAY_COLOR_WPM_BAR_ACTIVE   0xc2526a
-#define DISPLAY_COLOR_WPM_BAR_INACTIVE 0x242424
-#define DISPLAY_COLOR_WPM_TEXT         0xc2526a
+/* Orange for the focus-block timer, not the stock red/magenta: the battery
+   arcs are already teal/green, so a green timer would compete with them.
+   Orange gives a clean split — green = status/health, orange = work in
+   progress. Single colour throughout; no depletion transition. */
+#define DISPLAY_COLOR_TIMER_BAR_ACTIVE 0xe8871e
+#define DISPLAY_COLOR_TIMER_BAR_SPENT  0x242424
+#define DISPLAY_COLOR_TIMER_TEXT       0xe8871e
 
 #define DISPLAY_COLOR_LAYER_TEXT       0xffffff
 #define DISPLAY_COLOR_LAYER_DOT_ACTIVE   0xe0e0e0

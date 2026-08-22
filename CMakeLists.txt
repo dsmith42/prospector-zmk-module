@@ -15,6 +15,13 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
                 target_sources(app PRIVATE src/behaviors/behavior_caps_word.c)
         endif()
 
+        zephyr_library_sources(src/block_timer.c)
+        zephyr_library_sources(src/events/block_timer_state_changed.c)
+
+        if(CONFIG_DT_HAS_ZMK_BEHAVIOR_BLOCK_TIMER_ENABLED)
+                zephyr_library_sources(src/behaviors/behavior_block_timer.c)
+        endif()
+
         zephyr_library_sources(src/events/split_central_status_changed.c)
         zephyr_library_sources(src/split/bluetooth/central_status_changed_observer.c)
 

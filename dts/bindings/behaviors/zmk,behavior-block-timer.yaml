@@ -1,0 +1,13 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: |
+  Focus-block timer control.
+
+  The single parameter is the block length in minutes. Pressing a binding
+  starts (or restarts) a block of that length. A parameter of 0 stops and
+  clears the timer.
+
+compatible: "zmk,behavior-block-timer"
+
+include: one_param.yaml
