@@ -1,0 +1,12 @@
+if PROSPECTOR_STATUS_SCREEN_DIAL
+
+config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    select LV_USE_LABEL
+    select LV_USE_ARC
+    select LV_USE_LINE
+    select LV_COLOR_SCREEN_TRANSP
+
+config LV_Z_MEM_POOL_SIZE
+    default 20000
+
+endif
