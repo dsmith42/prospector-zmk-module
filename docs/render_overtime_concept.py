@@ -87,7 +87,7 @@ def chrome(o, minutes, layer, batt, profile, mods, mono, sans, cols):
                  f'fill="{cols["mod_on"] if flag in mods else cols["mod_off"]}">{name}</text>')
 
 
-def render(style, minutes_left, total, layer, batt, profile, mods, ticks='between', ring_width=5, marker_len=1.0, marker_opacity=1.0, armed=False):
+def render(style, minutes_left, total, layer, batt, profile, mods, ticks='between', ring_width=5, marker_len=1.0, marker_opacity=1.0, armed=False, face=None, block=None):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
     track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
     hand_col = colour("DISPLAY_COLOR_DIAL_HAND")
@@ -125,6 +125,7 @@ def render(style, minutes_left, total, layer, batt, profile, mods, ticks='betwee
         ring_frac = max(0, minutes_left - FACE) / FACE
         overflow = max(0, minutes_left - FACE)
         tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
+        block_col = block or track
         tick_mid = (SHIPPED_TICK_IN + SHIPPED_TICK_OUT) / 2
 
         for i in range(SHIPPED_TICKS):
@@ -134,8 +135,17 @@ def render(style, minutes_left, total, layer, batt, profile, mods, ticks='betwee
 
         # Ring only exists for blocks over an hour, so a 45 looks like today's
         # screen with a black notch where the unused quarter is.
-        o.append(arc(cx, cy, r_ring, ring_track, track, ring_width))
-        o.append(wedge(cx, cy, r_disc, disc_track, track))
+        # Optional face: a full circle behind everything, darker than the block
+        # track, so the unused part of the block reads as dial rather than as a
+        # missing chunk.
+        if face:
+            o.append(f'<circle cx="{cx}" cy="{cy}" r="{r_disc}" fill="{face}"/>')
+            if ring_track > 0:
+                o.append(f'<circle cx="{cx}" cy="{cy}" r="{r_ring}" fill="none" '
+                         f'stroke="{face}" stroke-width="{ring_width}"/>')
+
+        o.append(arc(cx, cy, r_ring, ring_track, block_col, ring_width))
+        o.append(wedge(cx, cy, r_disc, disc_track, block_col))
         o.append(wedge(cx, cy, r_disc, disc_frac, active))
         o.append(arc(cx, cy, r_ring, ring_frac, active, ring_width))
 
@@ -237,9 +247,11 @@ if __name__ == "__main__":
                     help="marker length as a fraction of the disc-to-ring gap")
     ap.add_argument("--marker-opacity", type=float, default=1.0)
     ap.add_argument("--armed", action="store_true")
+    ap.add_argument("--face", default=None, help="colour of the always-full face disc")
+    ap.add_argument("--block", default=None, help="colour of the block-extent track")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(a.style, a.minutes, a.total or a.minutes, a.layer, a.battery, a.profile, a.mods, a.ticks, a.ring_width, a.marker_len, a.marker_opacity, a.armed))
+    out.write_text(render(a.style, a.minutes, a.total or a.minutes, a.layer, a.battery, a.profile, a.mods, a.ticks, a.ring_width, a.marker_len, a.marker_opacity, a.armed, a.face, a.block))
     print(f"wrote {out.relative_to(ROOT)}")

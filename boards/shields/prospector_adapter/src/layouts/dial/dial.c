@@ -71,8 +71,10 @@ static void dial_render(int disc_track, int disc_fill, int ring_track, int ring_
             if (ring_track > 0) {
                 lv_arc_set_bg_angles(widget->ring, 0, ring_track);
                 lv_obj_clear_flag(widget->ring, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
             } else {
                 lv_obj_add_flag(widget->ring, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
             }
         }
         if (ring_fill != prev_ring_fill) {
@@ -186,6 +188,33 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
         lv_obj_set_style_pad_all(widget->ticks[i], 0, LV_PART_MAIN);
     }
 
+    /* Face: the whole hour, always full, behind the block track. Without it
+     * the unused part of a short block reads as a missing chunk rather than as
+     * part of a dial. */
+    widget->face = lv_obj_create(widget->obj);
+    lv_obj_set_size(widget->face, DIAL_R * 2, DIAL_R * 2);
+    lv_obj_set_pos(widget->face, DIAL_CX - DIAL_R, DIAL_CY - DIAL_R);
+    lv_obj_set_style_radius(widget->face, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(widget->face, lv_color_hex(DISPLAY_COLOR_DIAL_FACE), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(widget->face, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(widget->face, 0, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(widget->face, 0, LV_PART_MAIN);
+
+    widget->face_ring = lv_arc_create(widget->obj);
+    lv_obj_remove_style(widget->face_ring, NULL, LV_PART_KNOB);
+    lv_obj_clear_flag(widget->face_ring, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(widget->face_ring, DIAL_RING_R * 2, DIAL_RING_R * 2);
+    lv_obj_set_pos(widget->face_ring, DIAL_CX - DIAL_RING_R, DIAL_CY - DIAL_RING_R);
+    lv_arc_set_rotation(widget->face_ring, 270);
+    lv_arc_set_bg_angles(widget->face_ring, 0, 360);
+    lv_arc_set_angles(widget->face_ring, 0, 0);
+    lv_obj_set_style_arc_width(widget->face_ring, DIAL_RING_W, LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->face_ring, lv_color_hex(DISPLAY_COLOR_DIAL_FACE), LV_PART_MAIN);
+    lv_obj_set_style_arc_opa(widget->face_ring, LV_OPA_TRANSP, LV_PART_INDICATOR);
+    lv_obj_set_style_bg_opa(widget->face_ring, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_set_style_border_width(widget->face_ring, 0, LV_PART_MAIN);
+    lv_obj_add_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
+
     /* An arc whose width equals its radius renders as a filled pie sector,
      * which is how you get a wedge out of LVGL without a canvas. */
     widget->arc = lv_arc_create(widget->obj);
@@ -198,7 +227,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     lv_arc_set_angles(widget->arc, 0, 0);
     lv_obj_set_style_arc_width(widget->arc, DIAL_R, LV_PART_MAIN);
     lv_obj_set_style_arc_width(widget->arc, DIAL_R, LV_PART_INDICATOR);
-    lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_SPENT), LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_DIAL_BLOCK), LV_PART_MAIN);
     lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_ACTIVE), LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(widget->arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->arc, 0, LV_PART_MAIN);
@@ -213,7 +242,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     lv_arc_set_angles(widget->ring, 0, 0);
     lv_obj_set_style_arc_width(widget->ring, DIAL_RING_W, LV_PART_MAIN);
     lv_obj_set_style_arc_width(widget->ring, DIAL_RING_W, LV_PART_INDICATOR);
-    lv_obj_set_style_arc_color(widget->ring, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_SPENT), LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->ring, lv_color_hex(DISPLAY_COLOR_DIAL_BLOCK), LV_PART_MAIN);
     lv_obj_set_style_arc_color(widget->ring, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_ACTIVE), LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(widget->ring, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->ring, 0, LV_PART_MAIN);

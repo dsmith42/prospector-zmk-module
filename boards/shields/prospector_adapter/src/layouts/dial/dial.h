@@ -31,6 +31,8 @@
 struct zmk_widget_dial {
     sys_snode_t node;
     lv_obj_t *obj;
+    lv_obj_t *face;
+    lv_obj_t *face_ring;
     lv_obj_t *arc;
     lv_obj_t *ring;
     lv_obj_t *ticks[DIAL_TICK_COUNT];

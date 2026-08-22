@@ -52,6 +52,8 @@ FACE = int(re.search(r"#define DIAL_FACE_MINUTES (\d+)", h).group(1))
 HUB_R = int(re.search(r"#define DIAL_HUB_R (\d+)", h).group(1))
 TICK_IN = DIAL_R + int(re.search(r"#define DIAL_TICK_IN \(DIAL_R \+ (\d+)\)", h).group(1))
 TICK_OUT = DIAL_R + int(re.search(r"#define DIAL_TICK_OUT \(DIAL_R \+ (\d+)\)", h).group(1))
+RING_R = (DIAL_R + TICK_IN) // 2
+RING_W = int(re.search(r"#define DIAL_RING_W (\d+)", h).group(1))
 LOW = int(re.search(r"#define BATTERY_LOW_PCT (\d+)", src("status_text.c")).group(1))
 
 # Font sizes are inferred from the bundled font names used in status_text.c.
@@ -64,9 +66,10 @@ def font_for(pattern):
     return FONT_PX[m.group(1)]
 
 
-def render(minutes_left, layer, batt, profile, mods, usb=False, armed=False):
+def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=False):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
-    track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
+    face_col = colour("DISPLAY_COLOR_DIAL_FACE")
+    block_col = colour("DISPLAY_COLOR_DIAL_BLOCK")
     tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
     hand_col = colour("DISPLAY_COLOR_DIAL_HAND")
     hub_col = colour("DISPLAY_COLOR_DIAL_HUB")
@@ -97,16 +100,41 @@ def render(minutes_left, layer, batt, profile, mods, usb=False, armed=False):
         o.append(f'<circle cx="{CX + mid*math.cos(rad):.1f}" cy="{CY + mid*math.sin(rad):.1f}" '
                  f'r="1.5" fill="{tick_col}"/>')
 
-    o.append(f'<circle cx="{CX}" cy="{CY}" r="{DIAL_R}" fill="{track}"/>')
-    if frac >= 1:
-        o.append(f'<circle cx="{CX}" cy="{CY}" r="{DIAL_R}" fill="{active}"/>')
-    elif frac > 0:
-        a = math.radians(-90 + 360 * frac)
-        o.append(f'<path d="M {CX} {CY} L {CX} {CY-DIAL_R} A {DIAL_R} {DIAL_R} 0 '
-                 f'{1 if frac > 0.5 else 0} 1 {CX + DIAL_R*math.cos(a):.1f} '
-                 f'{CY + DIAL_R*math.sin(a):.1f} Z" fill="{active}"/>')
+    def pie(r, f, fill):
+        if f <= 0:
+            return ""
+        if f >= 1:
+            return f'<circle cx="{CX}" cy="{CY}" r="{r}" fill="{fill}"/>'
+        ang = math.radians(-90 + 360 * f)
+        return (f'<path d="M {CX} {CY} L {CX} {CY-r} A {r} {r} 0 '
+                f'{1 if f > 0.5 else 0} 1 {CX + r*math.cos(ang):.1f} '
+                f'{CY + r*math.sin(ang):.1f} Z" fill="{fill}"/>')
 
-    a = math.radians(-90 + 360 * frac)
+    def ring(r, f, stroke, w):
+        if f <= 0:
+            return ""
+        if f >= 1:
+            return f'<circle cx="{CX}" cy="{CY}" r="{r}" fill="none" stroke="{stroke}" stroke-width="{w}"/>'
+        ang = math.radians(-90 + 360 * f)
+        return (f'<path d="M {CX} {CY-r} A {r} {r} 0 {1 if f > 0.5 else 0} 1 '
+                f'{CX + r*math.cos(ang):.1f} {CY + r*math.sin(ang):.1f}" fill="none" '
+                f'stroke="{stroke}" stroke-width="{w}"/>')
+
+    # Face (the whole hour) < block (the length chosen) < orange (what remains).
+    disc_track = min(1.0, total / FACE)
+    ring_track = max(0, total - FACE) / FACE
+    ring_fill = max(0, minutes_left - FACE) / FACE
+
+    o.append(f'<circle cx="{CX}" cy="{CY}" r="{DIAL_R}" fill="{face_col}"/>')
+    if ring_track > 0:
+        o.append(ring(RING_R, 1.0, face_col, RING_W))
+        o.append(ring(RING_R, ring_track, block_col, RING_W))
+    o.append(pie(DIAL_R, disc_track, block_col))
+    o.append(pie(DIAL_R, frac, active))
+    if ring_fill > 0:
+        o.append(ring(RING_R, ring_fill, active, RING_W))
+
+    a = math.radians(-90 + 360 * ((minutes_left % FACE) / FACE))
     o.append(f'<line x1="{CX}" y1="{CY}" x2="{CX + (DIAL_R+4)*math.cos(a):.1f}" '
              f'y2="{CY + (DIAL_R+4)*math.sin(a):.1f}" stroke="{hand_col}" stroke-width="4" '
              f'stroke-linecap="round"/>')
@@ -134,6 +162,7 @@ def render(minutes_left, layer, batt, profile, mods, usb=False, armed=False):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--minutes", type=int, default=22)
+    ap.add_argument("--total", type=int, default=0, help="block length; defaults to --minutes")
     ap.add_argument("--layer", default="BASE")
     ap.add_argument("--battery", type=int, nargs=2, default=(87, 89), metavar=("L", "R"))
     ap.add_argument("--profile", type=int, default=2)
@@ -145,5 +174,5 @@ if __name__ == "__main__":
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb, a.armed))
+    out.write_text(render(a.minutes, a.total or a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb, a.armed))
     print(f"wrote {out.relative_to(ROOT)}")

@@ -13,6 +13,8 @@
 <circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
 <circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
 <circle cx="107" cy="106" r="78" fill="#242424"/>
+<path d="M 107 106 L 107 28 A 78 78 0 1 1 29.0 106.0 Z" fill="#3a3a3a"/>
+
 <line x1="107" y1="106" x2="107.0" y2="24.0" stroke="#ffab52" stroke-width="4" stroke-linecap="round"/>
 <circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
 <text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">0</text>
