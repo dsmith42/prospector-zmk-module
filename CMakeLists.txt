@@ -12,6 +12,10 @@ if(CONFIG_DT_HAS_ZMK_BEHAVIOR_BLOCK_TIMER_ENABLED)
         zephyr_library_sources(src/behaviors/behavior_block_timer.c)
 endif()
 
+if(CONFIG_DT_HAS_ZMK_BEHAVIOR_PROSPECTOR_BRIGHTNESS_ENABLED)
+        zephyr_library_sources(src/behaviors/behavior_prospector_brightness.c)
+endif()
+
 if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
 
         add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR}/drivers/display)

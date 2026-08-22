@@ -8,6 +8,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(als, 4);
 
+#include <zmk/prospector_brightness.h>
+
+#define BRIGHTNESS_MIN 5
+#define BRIGHTNESS_MAX 100
+
 static const struct device *pwm_leds_dev = DEVICE_DT_GET_ONE(pwm_leds);
 #define DISP_BL DT_NODE_CHILD_IDX(DT_NODELABEL(disp_bl))
 
@@ -147,8 +152,32 @@ K_THREAD_DEFINE(als_tid, 1024, als_thread, NULL, NULL, NULL, K_LOWEST_APPLICATIO
 
 #else
 
+static uint8_t fixed_brightness = CONFIG_PROSPECTOR_FIXED_BRIGHTNESS;
+
+/* Runtime override of the configured brightness. Not persisted — a power cycle
+ * returns to CONFIG_PROSPECTOR_FIXED_BRIGHTNESS, like the rest of this module's
+ * state. */
+void prospector_brightness_step(int delta) {
+    int next = (int)fixed_brightness + delta;
+
+    if (next < BRIGHTNESS_MIN) {
+        next = BRIGHTNESS_MIN;
+    } else if (next > BRIGHTNESS_MAX) {
+        next = BRIGHTNESS_MAX;
+    }
+
+    if (next == (int)fixed_brightness) {
+        return;
+    }
+
+    fixed_brightness = (uint8_t)next;
+    if (led_set_brightness(pwm_leds_dev, DISP_BL, fixed_brightness)) {
+        LOG_ERR("Failed to set brightness");
+    }
+}
+
 static int init_fixed_brightness(void) {
-    led_set_brightness(pwm_leds_dev, DISP_BL, CONFIG_PROSPECTOR_FIXED_BRIGHTNESS);
+    led_set_brightness(pwm_leds_dev, DISP_BL, fixed_brightness);
 
     return 0;
 }

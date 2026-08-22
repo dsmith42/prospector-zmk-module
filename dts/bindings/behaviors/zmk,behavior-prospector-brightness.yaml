@@ -1,0 +1,13 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+description: |
+  Step the Prospector display backlight.
+
+  The single parameter is BRI_UP or BRI_DOWN from
+  dt-bindings/zmk/prospector_brightness.h. Step size is
+  CONFIG_PROSPECTOR_BRIGHTNESS_STEP.
+
+compatible: "zmk,behavior-prospector-brightness"
+
+include: one_param.yaml
