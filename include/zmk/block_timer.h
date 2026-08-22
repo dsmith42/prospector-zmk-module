@@ -18,7 +18,8 @@ struct zmk_block_timer_state {
     int64_t total_ms;
 };
 
-/* Start (or restart) a block of the given length. */
+/* Start a block of the given length. Ignored while a block is already
+ * running — stop it first. See the lock rationale in block_timer.c. */
 void zmk_block_timer_start(uint16_t minutes);
 
 /* Stop and clear. */

@@ -19,6 +19,15 @@ void zmk_block_timer_start(uint16_t minutes) {
         return;
     }
 
+    /* A running block is locked: starts are ignored until it is stopped
+     * deliberately or reaches zero. Elapsed time is the one piece of state the
+     * system cares about, and a stray keypress must not be able to discard it.
+     * Switching length mid-block is therefore two deliberate acts — stop, then
+     * start — which is the intent. */
+    if (running && (deadline_ms - k_uptime_get()) > 0) {
+        return;
+    }
+
     total_ms = (int64_t)minutes * 60 * 1000;
     deadline_ms = k_uptime_get() + total_ms;
     running = true;
