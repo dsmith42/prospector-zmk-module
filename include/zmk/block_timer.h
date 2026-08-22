@@ -16,10 +16,16 @@ struct zmk_block_timer_state {
     bool running;
     int64_t remaining_ms;
     int64_t total_ms;
+    uint16_t armed_minutes;   /* what BLK_START would begin */
 };
 
-/* Start a block of the given length. Ignored while a block is already
- * running — stop it first. See the lock rationale in block_timer.c. */
+/* Select the length a later start will use. Ignored while running. */
+void zmk_block_timer_arm(uint16_t minutes);
+
+/* Start the armed length. Ignored while running — stop it first. */
+void zmk_block_timer_start_armed(void);
+
+/* Start a block of the given length directly. Ignored while running. */
 void zmk_block_timer_start(uint16_t minutes);
 
 /* Stop and clear. */

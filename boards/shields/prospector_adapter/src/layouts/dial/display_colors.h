@@ -17,6 +17,9 @@
    ambient. Orange stays reserved for the dial itself. */
 /* Hand is a brighter orange than the wedge so it stays legible where it sits
    on top of the filled remainder, rather than disappearing into it. */
+/* Armed but not started: the wedge previews the selected length in a dimmed
+   orange, so choosing a length is visible rather than a hidden mode. */
+#define DISPLAY_COLOR_DIAL_ARMED       0x6b3d0d
 #define DISPLAY_COLOR_DIAL_HAND        0xffab52
 #define DISPLAY_COLOR_DIAL_TICK        0x9a9a9a
 #define DISPLAY_COLOR_DIAL_HUB         0xd8d4cc

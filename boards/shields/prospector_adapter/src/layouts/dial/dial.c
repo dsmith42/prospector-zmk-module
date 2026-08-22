@@ -18,6 +18,7 @@ static struct k_work_delayable dial_tick_work;
 
 static int prev_minutes = -1;
 static int prev_tenths = -1;   /* wedge angle in tenths of a degree */
+static int prev_armed = -1;    /* -1 unknown, 0 running, 1 armed preview */
 
 struct dial_state {
     bool running;
@@ -28,9 +29,23 @@ static int minutes_remaining(int64_t remaining_ms) {
     return (int)((remaining_ms + 59999) / 60000);
 }
 
-static void dial_render(int angle_tenths, int minutes) {
+static void dial_render(int angle_tenths, int minutes, bool armed_preview) {
     struct zmk_widget_dial *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        if ((int)armed_preview != prev_armed) {
+            uint32_t wedge = armed_preview ? DISPLAY_COLOR_DIAL_ARMED
+                                           : DISPLAY_COLOR_TIMER_BAR_ACTIVE;
+            lv_obj_set_style_arc_color(widget->arc, lv_color_hex(wedge), LV_PART_INDICATOR);
+            lv_obj_set_style_line_color(widget->hand,
+                                        lv_color_hex(armed_preview ? DISPLAY_COLOR_DIAL_ARMED
+                                                                   : DISPLAY_COLOR_DIAL_HAND),
+                                        LV_PART_MAIN);
+            lv_obj_set_style_text_color(widget->minutes_label,
+                                        lv_color_hex(armed_preview ? DISPLAY_COLOR_DIAL_ARMED
+                                                                   : DISPLAY_COLOR_DIAL_MINUTES),
+                                        LV_PART_MAIN);
+        }
+
         if (angle_tenths != prev_tenths) {
             /* LVGL arcs run clockwise from the rotation origin, which is set to
              * the top in init, so the indicator is simply 0 -> sweep. */
@@ -51,19 +66,28 @@ static void dial_render(int angle_tenths, int minutes) {
 
     prev_tenths = angle_tenths;
     prev_minutes = minutes;
+    prev_armed = (int)armed_preview;
 }
 
 static void refresh(void) {
     struct zmk_block_timer_state state;
     zmk_block_timer_get(&state);
 
-    int minutes = minutes_remaining(state.remaining_ms);
     int64_t face_ms = (int64_t)DIAL_FACE_MINUTES * 60 * 1000;
-    int64_t remaining = state.remaining_ms > face_ms ? face_ms : state.remaining_ms;
-    int angle_tenths = (int)((remaining * 3600) / face_ms);
+    bool live = state.running && state.remaining_ms > 0;
 
-    if (angle_tenths != prev_tenths || minutes != prev_minutes) {
-        dial_render(angle_tenths, minutes);
+    /* Not running: preview the armed length dimmed, so picking a length shows
+     * on the dial before anything starts. */
+    int64_t shown_ms = live ? state.remaining_ms : (int64_t)state.armed_minutes * 60 * 1000;
+    if (shown_ms > face_ms) {
+        shown_ms = face_ms;
+    }
+
+    int minutes = minutes_remaining(shown_ms);
+    int angle_tenths = (int)((shown_ms * 3600) / face_ms);
+
+    if (angle_tenths != prev_tenths || minutes != prev_minutes || (int)!live != prev_armed) {
+        dial_render(angle_tenths, minutes, !live);
     }
 
     /* Stop ticking at zero. An empty dial with the hand at twelve is both the

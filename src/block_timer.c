@@ -8,6 +8,14 @@ static int64_t deadline_ms;
 static int64_t total_ms;
 static bool running;
 
+/* Survives a block, so the common case is start-without-choosing. Not
+ * persisted: a power cycle is a fresh state, like everything else here. */
+static uint16_t armed_minutes = 30;
+
+static bool block_is_running(void) {
+    return running && (deadline_ms - k_uptime_get()) > 0;
+}
+
 static void raise_changed(void) {
     raise_zmk_block_timer_state_changed(
         (struct zmk_block_timer_state_changed){.running = running});
@@ -24,7 +32,7 @@ void zmk_block_timer_start(uint16_t minutes) {
      * system cares about, and a stray keypress must not be able to discard it.
      * Switching length mid-block is therefore two deliberate acts — stop, then
      * start — which is the intent. */
-    if (running && (deadline_ms - k_uptime_get()) > 0) {
+    if (block_is_running()) {
         return;
     }
 
@@ -43,7 +51,19 @@ void zmk_block_timer_stop(void) {
     raise_changed();
 }
 
+void zmk_block_timer_arm(uint16_t minutes) {
+    if (block_is_running() || minutes == 0) {
+        return;
+    }
+
+    armed_minutes = minutes;
+    raise_changed();
+}
+
+void zmk_block_timer_start_armed(void) { zmk_block_timer_start(armed_minutes); }
+
 void zmk_block_timer_get(struct zmk_block_timer_state *out) {
+    out->armed_minutes = armed_minutes;
     out->running = running;
     out->total_ms = total_ms;
 
