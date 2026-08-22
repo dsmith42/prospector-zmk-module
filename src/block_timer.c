@@ -8,9 +8,10 @@ static int64_t deadline_ms;
 static int64_t total_ms;
 static bool running;
 
-/* Survives a block, so the common case is start-without-choosing. Not
- * persisted: a power cycle is a fresh state, like everything else here. */
-static uint16_t armed_minutes = 30;
+/* Survives a block, so the common case is start-without-choosing. 45 is the
+ * default because it is the most generally useful block length. Not persisted:
+ * a power cycle is a fresh state, like everything else here. */
+static uint16_t armed_minutes = 45;
 
 static bool block_is_running(void) {
     return running && (deadline_ms - k_uptime_get()) > 0;

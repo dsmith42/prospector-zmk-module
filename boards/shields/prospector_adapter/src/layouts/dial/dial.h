@@ -19,13 +19,15 @@
 
 #define DIAL_CX 107
 #define DIAL_CY 106
-#define DIAL_R 78
-#define DIAL_TICK_IN (DIAL_R + 14)
-#define DIAL_TICK_OUT (DIAL_R + 22)
+#define DIAL_R 74
+#define DIAL_TICK_IN (DIAL_R + 18)
+#define DIAL_TICK_OUT (DIAL_R + 26)
 #define DIAL_HUB_R 8
 
-/* Overflow ring, centred in the band between the disc edge and the ticks. */
-#define DIAL_RING_R ((DIAL_R + DIAL_TICK_IN) / 2)
+/* Overflow ring, placed to leave clear air either side: >=7px from the disc
+   edge and >=5px from the tick dots. Offsets are explicit rather than derived,
+   so changing the disc radius does not silently close the gaps. */
+#define DIAL_RING_R (DIAL_R + 10)
 #define DIAL_RING_W 5
 
 struct zmk_widget_dial {

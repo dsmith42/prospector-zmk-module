@@ -52,7 +52,7 @@ FACE = int(re.search(r"#define DIAL_FACE_MINUTES (\d+)", h).group(1))
 HUB_R = int(re.search(r"#define DIAL_HUB_R (\d+)", h).group(1))
 TICK_IN = DIAL_R + int(re.search(r"#define DIAL_TICK_IN \(DIAL_R \+ (\d+)\)", h).group(1))
 TICK_OUT = DIAL_R + int(re.search(r"#define DIAL_TICK_OUT \(DIAL_R \+ (\d+)\)", h).group(1))
-RING_R = (DIAL_R + TICK_IN) // 2
+RING_R = DIAL_R + int(re.search(r"#define DIAL_RING_R \(DIAL_R \+ (\d+)\)", h).group(1))
 RING_W = int(re.search(r"#define DIAL_RING_W (\d+)", h).group(1))
 LOW = int(re.search(r"#define BATTERY_LOW_PCT (\d+)", src("status_text.c")).group(1))
 

@@ -145,7 +145,7 @@ The `zmk,behavior-block-timer` behaviour takes one parameter, from `dt-bindings/
 > [!IMPORTANT]
 > Define the node in your **keymap**, not in a dongle-only overlay. Split peripherals compile the same keymap and must be able to resolve the binding, even though only the dongle renders the widget.
 
-**Arming is separate from starting.** `&blk 30` selects 30 minutes and the dial previews it dimmed; nothing runs until `&blk BLK_START`. The armed length persists across blocks and defaults to 30, so a start with no prior selection is fine.
+**Arming is separate from starting.** `&blk 30` selects 30 minutes and the dial previews it dimmed; nothing runs until `&blk BLK_START`. The armed length persists across blocks and defaults to 45, so a start with no prior selection is fine.
 
 **A running block is locked.** Arming and starting are both ignored while one runs — only `BLK_STOP` has any effect. A mis-hit therefore cannot discard elapsed time, which is the one piece of state worth protecting. Changing length mid-block is stop, arm, start.
 
