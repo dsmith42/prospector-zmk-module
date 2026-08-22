@@ -7,11 +7,17 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 > [!IMPORTANT]
 > This branch is a work-in-progress and is only compatible with the Zephyr 4.1 version of ZMK (current main).
 
+> [!NOTE]
+> **This is a fork** of [carrefinho/prospector-zmk-module](https://github.com/carrefinho/prospector-zmk-module), branched off `feat/new-status-screens` at `ed98221`.
+>
+> It diverges in one way: **the Operator layout's WPM meter is replaced by a focus-block timer** — see [Focus Block Timer](#focus-block-timer). WPM is removed entirely from that layout, including `CONFIG_ZMK_WPM`. Everything else, and all three other layouts, are unchanged from upstream.
+
 ## Table of Contents
 
 - [Features](#features)
 - [Installation](#installation)
 - [Status Screens](#status-screens)
+- [Focus Block Timer](#focus-block-timer)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
@@ -26,6 +32,7 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 - BLE profile and output indicator
 - Active modifier display
 - Caps word indicator
+- Focus-block countdown timer (Operator layout, this fork only — replaces WPM)
 
 ## Installation
 
@@ -72,6 +79,50 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_RADII=y
 CONFIG_PROSPECTOR_STATUS_SCREEN_FIELD=y
 CONFIG_PROSPECTOR_STATUS_SCREEN_OPERATOR=y
 ```
+
+## Focus Block Timer
+
+Fork-only. The Operator layout renders a focus-block countdown where upstream shows WPM — same 26-bar geometry and numeric readout, different data source and colour.
+
+### Binding
+
+The `zmk,behavior-block-timer` behaviour takes the block length in minutes as its parameter. `0` stops and clears.
+
+```dts
+/ {
+    behaviors {
+        blk: block_timer {
+            compatible = "zmk,behavior-block-timer";
+            #binding-cells = <1>;
+        };
+    };
+};
+```
+
+Then `&blk 30` starts a 30 minute block, `&blk 90` a 90, and `&blk 0` stops. Pressing a start binding again restarts from full — there is deliberately no pause or reset.
+
+> [!IMPORTANT]
+> Define the node in your **keymap**, not in a dongle-only overlay. Split peripherals compile the same keymap and must be able to resolve the binding, even though only the dongle renders the widget.
+
+Guarding stop behind a tap-dance is worth considering, since stopping discards a running block's elapsed time:
+
+```dts
+blk_td: blk_td {
+    compatible = "zmk,behavior-tap-dance";
+    #binding-cells = <0>;
+    tapping-term-ms = <250>;
+    bindings = <&blk 30>, <&none>, <&blk 0>;   // tap start, third tap stop
+};
+```
+
+### Behaviour
+
+- **Minutes round up**, so it never reads finished with 59 seconds left.
+- **Bars are proportional to the block length**, so the bar always starts full and a 30 reads identically to a 90 at a glance.
+- **One colour throughout** — orange for remaining, grey for spent. No green/amber/red transition: that reads as a deadline, and the timer is meant as pacing.
+- **At zero it sits at 0 with an empty bar and stops ticking.** No flash, no inversion, no colour change. This is identical to the pre-start state by design — one quiet state rather than two.
+
+State is a single absolute deadline, with remaining time recomputed from the monotonic uptime clock at render. Nothing that happens to the display affects it, and there is no drift and no clock to set.
 
 ## Usage
 
