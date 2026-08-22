@@ -13,11 +13,11 @@
 <circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
 <circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
 <circle cx="107" cy="106" r="78" fill="#242424"/>
-<path d="M 107 106 L 107 28 A 78 78 0 0 1 170.1 151.8 Z" fill="#e8871e"/>
-<line x1="107" y1="106" x2="173.3" y2="154.2" stroke="#ffab52" stroke-width="4" stroke-linecap="round"/>
+<path d="M 107 106 L 107 28 A 78 78 0 0 1 170.1 151.8 Z" fill="#6b3d0d"/>
+<line x1="107" y1="106" x2="173.3" y2="154.2" stroke="#6b3d0d" stroke-width="4" stroke-linecap="round"/>
 <circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
-<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
-<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">USB</text>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#6b3d0d">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
 <text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
 <text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
 <text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#b1e5f0">BASE</text>

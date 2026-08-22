@@ -96,9 +96,15 @@ Fork-only. A focus-block countdown, rendered two ways.
 
 `CONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y`. The block as a **60 minute analogue face**, with layer, modifiers, profile and battery as plain text around it. A 30 fills half the dial, so the face shows *which* block is running.
 
-![Dial layout, 22 minutes remaining](docs/images/dial-layout.svg)
+![Dial layout, 21 minutes remaining of a running block](docs/images/dial-layout.svg)
 
 Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every five minutes; the hand marks the boundary in a brighter orange so it stays legible on top of the filled wedge.
+
+Selecting a length **arms** it without starting anything, and the dial previews it dimmed — so choosing is visible rather than a hidden mode:
+
+![Dial layout with a length armed but not started, shown dimmed](docs/images/dial-layout-armed.svg)
+
+Wedge, hand and numeral all dim together, and go to full brightness the moment the block starts.
 
 ### Operator layout
 

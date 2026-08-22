@@ -64,7 +64,7 @@ def font_for(pattern):
     return FONT_PX[m.group(1)]
 
 
-def render(minutes_left, layer, batt, profile, mods, usb=False):
+def render(minutes_left, layer, batt, profile, mods, usb=False, armed=False):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
     track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
     tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
@@ -76,6 +76,11 @@ def render(minutes_left, layer, batt, profile, mods, usb=False):
     low_col = colour("DISPLAY_COLOR_BATTERY_LOW_TEXT")
     mod_on = colour("DISPLAY_COLOR_MOD_ACTIVE")
     mod_off = colour("DISPLAY_COLOR_MOD_INACTIVE")
+
+    # Armed but not started: wedge, hand and numeral dim together, so the
+    # selected length previews without reading as a running block.
+    if armed:
+        active = hand_col = min_col = colour("DISPLAY_COLOR_DIAL_ARMED")
 
     frac = max(0.0, min(1.0, minutes_left / FACE))
     mono = "ui-monospace,'SF Mono',Menlo,Consolas,monospace"
@@ -134,9 +139,11 @@ if __name__ == "__main__":
     ap.add_argument("--profile", type=int, default=2)
     ap.add_argument("--mods", default="")
     ap.add_argument("--usb", action="store_true", help="show USB instead of a BLE profile")
+    ap.add_argument("--armed", action="store_true",
+                    help="armed but not started: dimmed preview of the selected length")
     ap.add_argument("--out", default="docs/images/dial-layout.svg")
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb))
+    out.write_text(render(a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb, a.armed))
     print(f"wrote {out.relative_to(ROOT)}")
