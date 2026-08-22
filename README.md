@@ -102,7 +102,7 @@ Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every f
 
 Selecting a length **arms** it without starting anything, and the dial previews it dimmed — so choosing is visible rather than a hidden mode:
 
-![Dial layout with a length armed but not started, shown dimmed](docs/images/dial-layout-armed.svg)
+![Dial layout with 30 minutes armed but not started, shown dimmed](docs/images/dial-layout-armed.svg)
 
 Wedge, hand and numeral all dim together, and go to full brightness the moment the block starts.
 
