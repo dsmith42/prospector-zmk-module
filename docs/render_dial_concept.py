@@ -27,8 +27,8 @@ ROOT = Path(__file__).resolve().parent.parent
 OP = ROOT / "boards/shields/prospector_adapter/src/layouts/operator"
 PANEL_W, PANEL_H = 280, 240
 FACE = 60                      # minutes; blocks are capped at this
-BATT_YELLOW, BATT_RED = 25, 10
-WARN_YELLOW, WARN_RED = "#e8d21e", "#d63a2f"
+BATT_LOW = 15          # below this the numeral turns red; no badge, text only
+BATT_LOW_COLOUR = "#ff3b30"
 
 
 def colour(name):
@@ -39,13 +39,15 @@ def colour(name):
     return "#" + m.group(1).zfill(6)
 
 
-def render(minutes_left, total, layer, batt_l, batt_r, profile, show_digits):
+def render(minutes_left, total, layer, batt_l, batt_r, profile, show_digits, mods=""):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
     track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
     # Layer takes Operator's modifier blue and battery takes its battery green,
     # so the diagnostics read as the same family as the stock screen rather than
     # as new vocabulary. Orange stays reserved for the timer.
     layer_col = colour("DISPLAY_COLOR_MOD_ACTIVE")
+    mod_on = colour("DISPLAY_COLOR_MOD_ACTIVE")
+    mod_off = colour("DISPLAY_COLOR_MOD_INACTIVE")
     batt_label = colour("DISPLAY_COLOR_BATTERY_FILL")
     dim = colour("DISPLAY_COLOR_OUTPUT_INACTIVE_TEXT")
 
@@ -98,32 +100,30 @@ def render(minutes_left, total, layer, batt_l, batt_r, profile, show_digits):
         o.append(f'<text x="{right}" y="46" text-anchor="end" font-family="{mono}" '
                  f'font-size="30" fill="#8a8a8a">{minutes_left}</text>')
 
-    # Bottom row: layer far left, both batteries far right, one baseline.
+    # Right column, bottom-up: batteries side by side with the profile above
+    # them. Position carries left/right, so no L/R prefixes.
+    batt_y = 204
+    o.append(f'<text x="{right}" y="{batt_y - 28}" text-anchor="end" font-family="{mono}" '
+             f'font-size="16" fill="{dim}">B{profile}</text>')
+
+    for i, pct in enumerate((batt_l, batt_r)):
+        x = right - 30 * (1 - i)
+        # Text-only warning: red numeral below the threshold, nothing else. No
+        # badge, no background, no flash — it just stops being green.
+        fg = BATT_LOW_COLOUR if pct < BATT_LOW else batt_label
+        o.append(f'<text x="{x}" y="{batt_y}" text-anchor="end" font-family="{mono}" '
+                 f'font-size="17" fill="{fg}">{pct}</text>')
+
+    # Bottom row: layer far left, modifiers far right, one baseline. Horizontal
+    # again, so a chord is scanned in one movement rather than four.
     base_y = PANEL_H - 12
     o.append(f'<text x="10" y="{base_y}" font-family="{sans}" font-size="18" '
              f'font-weight="400" letter-spacing="1.0" fill="{layer_col}">{layer}</text>')
 
-    # Profile marker sits directly above the batteries — everything checked when
-    # something is wrong ends up in one corner. "BLE" dropped; B and a digit do.
-    o.append(f'<text x="{right}" y="{base_y - 26}" text-anchor="end" font-family="{mono}" '
-             f'font-size="16" fill="{dim}">B{profile}</text>')
-
-    # No L/R prefixes: the numbers are already left and right.
-    cell = 46
-    for i, pct in enumerate((batt_l, batt_r)):
-        x = right - cell * (1 - i)
-        if pct <= BATT_RED:
-            bg, fg = WARN_RED, "#000000"
-        elif pct <= BATT_YELLOW:
-            bg, fg = WARN_YELLOW, "#000000"
-        else:
-            bg, fg = None, batt_label
-        if bg:
-            # Inverted badge, static. Fixed cells so the row cannot reflow at
-            # exactly the moment a warning appears.
-            o.append(f'<rect x="{x-38}" y="{base_y-16}" width="40" height="23" rx="5" fill="{bg}"/>')
-        o.append(f'<text x="{x}" y="{base_y}" text-anchor="end" font-family="{mono}" '
-                 f'font-size="17" fill="{fg}">{pct}</text>')
+    for i, (flag, name) in enumerate((("G", "CMD"), ("A", "OPT"), ("C", "CTL"), ("S", "SFT"))):
+        o.append(f'<text x="{right - (3-i)*42}" y="{base_y}" text-anchor="end" '
+                 f'font-family="{sans}" font-size="15" font-weight="600" letter-spacing="0.5" '
+                 f'fill="{mod_on if flag in mods else mod_off}">{name}</text>')
 
     o.append("</svg>")
     return "\n".join(o)
@@ -137,10 +137,11 @@ if __name__ == "__main__":
     ap.add_argument("--battery", type=int, nargs=2, default=(87, 89), metavar=("L", "R"))
     ap.add_argument("--profile", type=int, default=2)
     ap.add_argument("--no-digits", action="store_true")
+    ap.add_argument("--mods", default="", help="active modifiers, e.g. GS for Cmd+Shift")
     ap.add_argument("--out", default="docs/images/dial60-concept.svg")
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render(a.minutes, a.total, a.layer, a.battery[0], a.battery[1],
-                          a.profile, not a.no_digits))
+                          a.profile, not a.no_digits, a.mods))
     print(f"wrote {out.relative_to(ROOT)}")
