@@ -84,6 +84,14 @@ CONFIG_PROSPECTOR_STATUS_SCREEN_OPERATOR=y
 
 Fork-only. The Operator layout renders a focus-block countdown where upstream shows WPM — same 26-bar geometry and numeric readout, different data source and colour.
 
+![Operator layout with a focus block timer, 21 minutes remaining of a 30 minute block](docs/images/operator-block-timer.svg)
+
+*21 minutes remaining of a 30 minute block. Generated from the widget's own constants by [`docs/render_timer_mock.py`](docs/render_timer_mock.py) — rerun it after changing the geometry or colours so the picture can't drift from the code:*
+
+```sh
+python3 docs/render_timer_mock.py --minutes 21 --total 30
+```
+
 ### Binding
 
 The `zmk,behavior-block-timer` behaviour takes the block length in minutes as its parameter. `0` stops and clears.
