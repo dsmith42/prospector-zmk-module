@@ -27,6 +27,20 @@ D = ROOT / "boards/shields/prospector_adapter/src/layouts/dial"
 PANEL_W, PANEL_H = 280, 240
 FACE = 60
 
+_H = (D / "dial.h").read_text()
+
+
+def _def(name):
+    return int(re.search(rf"#define {name} (\d+)", _H).group(1))
+
+
+SHIPPED_R = _def("DIAL_R")
+SHIPPED_CX = _def("DIAL_CX")
+SHIPPED_CY = _def("DIAL_CY")
+SHIPPED_TICKS = _def("DIAL_TICK_COUNT")
+SHIPPED_TICK_IN = SHIPPED_R + int(re.search(r"#define DIAL_TICK_IN \(DIAL_R \+ (\d+)\)", _H).group(1))
+SHIPPED_TICK_OUT = SHIPPED_R + int(re.search(r"#define DIAL_TICK_OUT \(DIAL_R \+ (\d+)\)", _H).group(1))
+
 
 def colour(name):
     m = re.search(rf"#define\s+{name}\s+0x([0-9a-fA-F]+)", (D / "display_colors.h").read_text())
@@ -73,11 +87,14 @@ def chrome(o, minutes, layer, batt, profile, mods, mono, sans, cols):
                  f'fill="{cols["mod_on"] if flag in mods else cols["mod_off"]}">{name}</text>')
 
 
-def render(style, minutes_left, layer, batt, profile, mods, ticks='between', ring_width=5):
+def render(style, minutes_left, total, layer, batt, profile, mods, ticks='between', ring_width=5, marker_len=1.0, marker_opacity=1.0, armed=False):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
     track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
     hand_col = colour("DISPLAY_COLOR_DIAL_HAND")
     hub_col = colour("DISPLAY_COLOR_DIAL_HUB")
+    # Armed but not started: the whole timer dims, ring included.
+    if armed:
+        active = hand_col = colour("DISPLAY_COLOR_DIAL_ARMED")
     cols = {"min": colour("DISPLAY_COLOR_DIAL_MINUTES"),
             "prof": colour("DISPLAY_COLOR_DIAL_PROFILE"),
             "batt": colour("DISPLAY_COLOR_BATTERY_FILL"),
@@ -93,10 +110,51 @@ def render(style, minutes_left, layer, batt, profile, mods, ticks='between', rin
          f'aria-label="{style} concept, {minutes_left} minutes remaining">',
          f'<rect width="{PANEL_W}" height="{PANEL_H}" fill="#000000"/>']
 
-    if style == "ring":
+    if style == "shipped":
+        # The shipped dial, untouched, with the overtime ring dropped into the
+        # empty band between the disc edge and the existing tick dots.
+        cx, cy = SHIPPED_CX, SHIPPED_CY
+        r_disc = SHIPPED_R
+        r_ring = (SHIPPED_R + SHIPPED_TICK_IN) / 2
+        # Grey is the BLOCK, not the face: a 45 greys three quarters of the disc
+        # and leaves the rest black, so the chosen length stays visible even at
+        # zero. Orange is what remains of it.
+        disc_track = min(1.0, total / FACE)
+        ring_track = max(0, total - FACE) / FACE
+        disc_frac = min(1.0, minutes_left / FACE)
+        ring_frac = max(0, minutes_left - FACE) / FACE
+        overflow = max(0, minutes_left - FACE)
+        tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
+        tick_mid = (SHIPPED_TICK_IN + SHIPPED_TICK_OUT) / 2
+
+        for i in range(SHIPPED_TICKS):
+            ang = math.radians(-90 + 360 * i / SHIPPED_TICKS)
+            o.append(f'<circle cx="{cx + tick_mid*math.cos(ang):.1f}" '
+                     f'cy="{cy + tick_mid*math.sin(ang):.1f}" r="1.5" fill="{tick_col}"/>')
+
+        # Ring only exists for blocks over an hour, so a 45 looks like today's
+        # screen with a black notch where the unused quarter is.
+        o.append(arc(cx, cy, r_ring, ring_track, track, ring_width))
+        o.append(wedge(cx, cy, r_disc, disc_track, track))
+        o.append(wedge(cx, cy, r_disc, disc_frac, active))
+        o.append(arc(cx, cy, r_ring, ring_frac, active, ring_width))
+
+        # One hand, one length, one formula. The ring fraction above the hour
+        # and the disc fraction below it are both (remaining mod 60) / 60, so
+        # the hand tracks whichever track is draining without a branch — and it
+        # sweeps continuously past twelve at the hour instead of jumping.
+        hand_frac = (minutes_left % FACE) / FACE
+        tip = r_disc + 4
+        a = math.radians(-90 + 360 * hand_frac)
+        o.append(f'<line x1="{cx}" y1="{cy}" x2="{cx + tip*math.cos(a):.1f}" '
+                 f'y2="{cy + tip*math.sin(a):.1f}" stroke="{hand_col}" stroke-width="4" '
+                 f'stroke-linecap="round"/>')
+        o.append(f'<circle cx="{cx}" cy="{cy}" r="8" fill="{hub_col}"/>')
+
+    elif style == "ring":
         # Ring is deliberately thin: a secondary indicator that only appears for
         # the top slice of the longest block, not a peer of the disc.
-        r_disc = 74
+        r_disc = 70
         r_ring = 92 if ticks == "between" else 86
         tick_mid = 83 if ticks == "between" else r_ring
         overflow = max(0, minutes_left - FACE)
@@ -109,13 +167,26 @@ def render(style, minutes_left, layer, batt, profile, mods, ticks='between', rin
         o.append(wedge(cx, cy, r_disc, disc_frac, active))
         o.append(arc(cx, cy, r_ring, ring_frac, active, ring_width))
 
-        # Five minute markers. Either in the gap between disc and ring, or laid
-        # over the ring's own track.
+        # Five minute markers. In the gap they are radial ticks spanning it, so
+        # they read as a scale belonging to the disc. Over the ring track there
+        # is no room for length, so they stay as dots.
+        tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
         for i in range(12):
             ang = math.radians(-90 + 360 * i / 12)
-            o.append(f'<circle cx="{cx + tick_mid*math.cos(ang):.1f}" '
-                     f'cy="{cy + tick_mid*math.sin(ang):.1f}" r="1.6" '
-                     f'fill="{colour("DISPLAY_COLOR_DIAL_TICK")}"/>')
+            if ticks == "between":
+                gap_in, gap_out = r_disc + 3, r_ring - ring_width / 2 - 3
+                span = (gap_out - gap_in) * marker_len
+                mid = (gap_in + gap_out) / 2
+                t_in, t_out = mid - span / 2, mid + span / 2
+                o.append(f'<line x1="{cx + t_in*math.cos(ang):.1f}" '
+                         f'y1="{cy + t_in*math.sin(ang):.1f}" '
+                         f'x2="{cx + t_out*math.cos(ang):.1f}" '
+                         f'y2="{cy + t_out*math.sin(ang):.1f}" stroke="{tick_col}" '
+                         f'stroke-width="2" stroke-linecap="round" stroke-opacity="{marker_opacity}"/>')
+            else:
+                o.append(f'<circle cx="{cx + tick_mid*math.cos(ang):.1f}" '
+                         f'cy="{cy + tick_mid*math.sin(ang):.1f}" r="1.6" '
+                         f'fill="{tick_col}"/>')
 
         # Hand rides whichever track is currently draining.
         on_ring = overflow > 0
@@ -153,17 +224,22 @@ def render(style, minutes_left, layer, batt, profile, mods, ticks='between', rin
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--style", choices=("ring", "spiral"), default="ring")
+    ap.add_argument("--style", choices=("shipped", "ring", "spiral"), default="shipped")
     ap.add_argument("--minutes", type=int, default=75)
+    ap.add_argument("--total", type=int, default=0, help="block length; defaults to --minutes")
     ap.add_argument("--layer", default="BASE")
     ap.add_argument("--battery", type=int, nargs=2, default=(87, 89), metavar=("L", "R"))
     ap.add_argument("--profile", type=int, default=2)
     ap.add_argument("--mods", default="")
     ap.add_argument("--ticks", choices=("between", "on-track"), default="between")
     ap.add_argument("--ring-width", type=int, default=5)
+    ap.add_argument("--marker-len", type=float, default=1.0,
+                    help="marker length as a fraction of the disc-to-ring gap")
+    ap.add_argument("--marker-opacity", type=float, default=1.0)
+    ap.add_argument("--armed", action="store_true")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(a.style, a.minutes, a.layer, a.battery, a.profile, a.mods, a.ticks, a.ring_width))
+    out.write_text(render(a.style, a.minutes, a.total or a.minutes, a.layer, a.battery, a.profile, a.mods, a.ticks, a.ring_width, a.marker_len, a.marker_opacity, a.armed))
     print(f"wrote {out.relative_to(ROOT)}")

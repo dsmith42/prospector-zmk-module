@@ -1,22 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="560" height="480" viewBox="0 0 280 240" role="img" aria-label="ring concept, 61 minutes remaining">
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="480" viewBox="0 0 280 240" role="img" aria-label="shipped concept, 61 minutes remaining">
 <rect width="280" height="240" fill="#000000"/>
-<circle cx="107" cy="106" r="92" fill="none" stroke="#242424" stroke-width="5"/>
-<circle cx="107" cy="106" r="74" fill="#242424"/>
-<circle cx="107" cy="106" r="74" fill="#e8871e"/>
-<path d="M 107 14 A 92 92 0 0 1 116.6 14.5" fill="none" stroke="#e8871e" stroke-width="5" stroke-linecap="butt"/>
-<circle cx="107.0" cy="23.0" r="1.6" fill="#9a9a9a"/>
-<circle cx="148.5" cy="34.1" r="1.6" fill="#9a9a9a"/>
-<circle cx="178.9" cy="64.5" r="1.6" fill="#9a9a9a"/>
-<circle cx="190.0" cy="106.0" r="1.6" fill="#9a9a9a"/>
-<circle cx="178.9" cy="147.5" r="1.6" fill="#9a9a9a"/>
-<circle cx="148.5" cy="177.9" r="1.6" fill="#9a9a9a"/>
-<circle cx="107.0" cy="189.0" r="1.6" fill="#9a9a9a"/>
-<circle cx="65.5" cy="177.9" r="1.6" fill="#9a9a9a"/>
-<circle cx="35.1" cy="147.5" r="1.6" fill="#9a9a9a"/>
-<circle cx="24.0" cy="106.0" r="1.6" fill="#9a9a9a"/>
-<circle cx="35.1" cy="64.5" r="1.6" fill="#9a9a9a"/>
-<circle cx="65.5" cy="34.1" r="1.6" fill="#9a9a9a"/>
-<line x1="107" y1="106" x2="117.2" y2="8.5" stroke="#ffab52" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<path d="M 107 21.0 A 85.0 85.0 0 0 1 107.0 191.0" fill="none" stroke="#242424" stroke-width="5" stroke-linecap="butt"/>
+<circle cx="107" cy="106" r="78" fill="#242424"/>
+<circle cx="107" cy="106" r="78" fill="#e8871e"/>
+<path d="M 107 21.0 A 85.0 85.0 0 0 1 115.9 21.5" fill="none" stroke="#e8871e" stroke-width="5" stroke-linecap="butt"/>
+<line x1="107" y1="106" x2="115.6" y2="24.4" stroke="#ffab52" stroke-width="4" stroke-linecap="round"/>
 <circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
 <text x="270" y="46" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">61</text>
 <text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
