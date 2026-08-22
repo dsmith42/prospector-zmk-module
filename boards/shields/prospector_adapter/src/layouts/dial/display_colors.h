@@ -17,6 +17,12 @@
    ambient. Orange stays reserved for the dial itself. */
 /* Hand is a brighter orange than the wedge so it stays legible where it sits
    on top of the filled remainder, rather than disappearing into it. */
+/* Three even steps: face (the whole hour) < block (the length you chose) <
+   orange (what remains). The face reuses the grey already proven readable on
+   this panel; the new colour goes where it has the most contrast to work with. */
+#define DISPLAY_COLOR_DIAL_FACE        0x242424
+#define DISPLAY_COLOR_DIAL_BLOCK       0x3a3a3a
+
 /* Armed but not started: the wedge previews the selected length in a dimmed
    orange, so choosing a length is visible rather than a hidden mode. */
 #define DISPLAY_COLOR_DIAL_ARMED       0x6b3d0d

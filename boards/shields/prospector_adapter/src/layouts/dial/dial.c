@@ -17,25 +17,37 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static struct k_work_delayable dial_tick_work;
 
 static int prev_minutes = -1;
-static int prev_tenths = -1;   /* wedge angle in tenths of a degree */
+static int prev_disc_track = -1;
+static int prev_disc_fill = -1;
+static int prev_ring_track = -1;
+static int prev_ring_fill = -1;
+static int prev_hand = -1;
 static int prev_armed = -1;    /* -1 unknown, 0 running, 1 armed preview */
+
+/* Degrees of dial per minute. */
+static int deg_of(int minutes) {
+    if (minutes <= 0) {
+        return 0;
+    }
+    if (minutes >= DIAL_FACE_MINUTES) {
+        return 360;
+    }
+    return (minutes * 360) / DIAL_FACE_MINUTES;
+}
 
 struct dial_state {
     bool running;
 };
 
-/* Minutes remaining, rounded UP: never read as finished with 59s left. */
-static int minutes_remaining(int64_t remaining_ms) {
-    return (int)((remaining_ms + 59999) / 60000);
-}
-
-static void dial_render(int angle_tenths, int minutes, bool armed_preview) {
+static void dial_render(int disc_track, int disc_fill, int ring_track, int ring_fill,
+                        int hand_deg, int minutes, bool armed_preview) {
     struct zmk_widget_dial *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         if ((int)armed_preview != prev_armed) {
             uint32_t wedge = armed_preview ? DISPLAY_COLOR_DIAL_ARMED
                                            : DISPLAY_COLOR_TIMER_BAR_ACTIVE;
             lv_obj_set_style_arc_color(widget->arc, lv_color_hex(wedge), LV_PART_INDICATOR);
+            lv_obj_set_style_arc_color(widget->ring, lv_color_hex(wedge), LV_PART_INDICATOR);
             lv_obj_set_style_line_color(widget->hand,
                                         lv_color_hex(armed_preview ? DISPLAY_COLOR_DIAL_ARMED
                                                                    : DISPLAY_COLOR_DIAL_HAND),
@@ -46,25 +58,48 @@ static void dial_render(int angle_tenths, int minutes, bool armed_preview) {
                                         LV_PART_MAIN);
         }
 
-        if (angle_tenths != prev_tenths) {
-            /* LVGL arcs run clockwise from the rotation origin, which is set to
-             * the top in init, so the indicator is simply 0 -> sweep. */
-            lv_arc_set_angles(widget->arc, 0, angle_tenths / 10);
+        /* Grey track spans the BLOCK, not the face, so a 45 leaves a black
+         * quarter and the finished screen still shows how long the block was. */
+        if (disc_track != prev_disc_track) {
+            lv_arc_set_bg_angles(widget->arc, 0, disc_track);
+        }
+        if (disc_fill != prev_disc_fill) {
+            lv_arc_set_angles(widget->arc, 0, disc_fill);
+        }
 
-            double rad = (angle_tenths / 10.0 - 90.0) * DIAL_PI / 180.0;
+        if (ring_track != prev_ring_track) {
+            if (ring_track > 0) {
+                lv_arc_set_bg_angles(widget->ring, 0, ring_track);
+                lv_obj_clear_flag(widget->ring, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
+            } else {
+                lv_obj_add_flag(widget->ring, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        if (ring_fill != prev_ring_fill) {
+            lv_arc_set_angles(widget->ring, 0, ring_fill);
+        }
+
+        if (hand_deg != prev_hand) {
+            double rad = (hand_deg - 90.0) * DIAL_PI / 180.0;
             widget->hand_points[1].x = DIAL_CX + (DIAL_R + 4) * cos(rad);
             widget->hand_points[1].y = DIAL_CY + (DIAL_R + 4) * sin(rad);
             lv_line_set_points(widget->hand, widget->hand_points, 2);
         }
 
         if (minutes != prev_minutes) {
-            char text[4];
+            char text[5];
             snprintf(text, sizeof(text), "%d", minutes);
             lv_label_set_text(widget->minutes_label, text);
         }
     }
 
-    prev_tenths = angle_tenths;
+    prev_disc_track = disc_track;
+    prev_disc_fill = disc_fill;
+    prev_ring_track = ring_track;
+    prev_ring_fill = ring_fill;
+    prev_hand = hand_deg;
     prev_minutes = minutes;
     prev_armed = (int)armed_preview;
 }
@@ -73,26 +108,41 @@ static void refresh(void) {
     struct zmk_block_timer_state state;
     zmk_block_timer_get(&state);
 
-    int64_t face_ms = (int64_t)DIAL_FACE_MINUTES * 60 * 1000;
     bool live = state.running && state.remaining_ms > 0;
 
-    /* Not running: preview the armed length dimmed, so picking a length shows
-     * on the dial before anything starts. */
-    int64_t shown_ms = live ? state.remaining_ms : (int64_t)state.armed_minutes * 60 * 1000;
-    if (shown_ms > face_ms) {
-        shown_ms = face_ms;
+    /* Not running: preview the armed length, dimmed, at its full extent. */
+    int total_min = live ? (int)(state.total_ms / 60000) : (int)state.armed_minutes;
+    int left_min = live ? (int)((state.remaining_ms + 59999) / 60000) : total_min;
+
+    if (total_min > DIAL_MAX_MINUTES) {
+        total_min = DIAL_MAX_MINUTES;
+    }
+    if (left_min > total_min) {
+        left_min = total_min;
     }
 
-    int minutes = minutes_remaining(shown_ms);
-    int angle_tenths = (int)((shown_ms * 3600) / face_ms);
+    int disc_track = deg_of(total_min);
+    int disc_fill = deg_of(left_min);
+    int ring_track = deg_of(total_min - DIAL_FACE_MINUTES);
+    int ring_fill = deg_of(left_min - DIAL_FACE_MINUTES);
 
-    if (angle_tenths != prev_tenths || minutes != prev_minutes || (int)!live != prev_armed) {
-        dial_render(angle_tenths, minutes, !live);
+    /* One hand, one length. Above the hour the ring fraction and below it the
+     * disc fraction are both (remaining mod 60) / 60, so the hand sweeps
+     * continuously past twelve at the boundary rather than jumping. */
+    int hand_deg = deg_of(left_min % DIAL_FACE_MINUTES);
+    if (hand_deg >= 360) {
+        hand_deg = 0;
     }
 
-    /* Stop ticking at zero. An empty dial with the hand at twelve is both the
-     * finished state and the pre-start state — one quiet state, not two. */
-    if (state.running && state.remaining_ms > 0) {
+    if (disc_track != prev_disc_track || disc_fill != prev_disc_fill ||
+        ring_track != prev_ring_track || ring_fill != prev_ring_fill ||
+        hand_deg != prev_hand || left_min != prev_minutes || (int)!live != prev_armed) {
+        dial_render(disc_track, disc_fill, ring_track, ring_fill, hand_deg, left_min, !live);
+    }
+
+    /* Stop ticking at zero. An empty block with the hand at twelve is both the
+     * finished state and the pre-start state. */
+    if (live) {
         k_work_schedule(&dial_tick_work, K_SECONDS(1));
     }
 }
@@ -138,6 +188,33 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
         lv_obj_set_style_pad_all(widget->ticks[i], 0, LV_PART_MAIN);
     }
 
+    /* Face: the whole hour, always full, behind the block track. Without it
+     * the unused part of a short block reads as a missing chunk rather than as
+     * part of a dial. */
+    widget->face = lv_obj_create(widget->obj);
+    lv_obj_set_size(widget->face, DIAL_R * 2, DIAL_R * 2);
+    lv_obj_set_pos(widget->face, DIAL_CX - DIAL_R, DIAL_CY - DIAL_R);
+    lv_obj_set_style_radius(widget->face, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(widget->face, lv_color_hex(DISPLAY_COLOR_DIAL_FACE), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(widget->face, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_border_width(widget->face, 0, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(widget->face, 0, LV_PART_MAIN);
+
+    widget->face_ring = lv_arc_create(widget->obj);
+    lv_obj_remove_style(widget->face_ring, NULL, LV_PART_KNOB);
+    lv_obj_clear_flag(widget->face_ring, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(widget->face_ring, DIAL_RING_R * 2, DIAL_RING_R * 2);
+    lv_obj_set_pos(widget->face_ring, DIAL_CX - DIAL_RING_R, DIAL_CY - DIAL_RING_R);
+    lv_arc_set_rotation(widget->face_ring, 270);
+    lv_arc_set_bg_angles(widget->face_ring, 0, 360);
+    lv_arc_set_angles(widget->face_ring, 0, 0);
+    lv_obj_set_style_arc_width(widget->face_ring, DIAL_RING_W, LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->face_ring, lv_color_hex(DISPLAY_COLOR_DIAL_FACE), LV_PART_MAIN);
+    lv_obj_set_style_arc_opa(widget->face_ring, LV_OPA_TRANSP, LV_PART_INDICATOR);
+    lv_obj_set_style_bg_opa(widget->face_ring, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_set_style_border_width(widget->face_ring, 0, LV_PART_MAIN);
+    lv_obj_add_flag(widget->face_ring, LV_OBJ_FLAG_HIDDEN);
+
     /* An arc whose width equals its radius renders as a filled pie sector,
      * which is how you get a wedge out of LVGL without a canvas. */
     widget->arc = lv_arc_create(widget->obj);
@@ -146,14 +223,30 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     lv_obj_set_size(widget->arc, DIAL_R * 2, DIAL_R * 2);
     lv_obj_set_pos(widget->arc, DIAL_CX - DIAL_R, DIAL_CY - DIAL_R);
     lv_arc_set_rotation(widget->arc, 270);
-    lv_arc_set_bg_angles(widget->arc, 0, 360);
+    lv_arc_set_bg_angles(widget->arc, 0, 0);
     lv_arc_set_angles(widget->arc, 0, 0);
     lv_obj_set_style_arc_width(widget->arc, DIAL_R, LV_PART_MAIN);
     lv_obj_set_style_arc_width(widget->arc, DIAL_R, LV_PART_INDICATOR);
-    lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_SPENT), LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_DIAL_BLOCK), LV_PART_MAIN);
     lv_obj_set_style_arc_color(widget->arc, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_ACTIVE), LV_PART_INDICATOR);
     lv_obj_set_style_bg_opa(widget->arc, LV_OPA_TRANSP, LV_PART_MAIN);
     lv_obj_set_style_border_width(widget->arc, 0, LV_PART_MAIN);
+
+    widget->ring = lv_arc_create(widget->obj);
+    lv_obj_remove_style(widget->ring, NULL, LV_PART_KNOB);
+    lv_obj_clear_flag(widget->ring, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(widget->ring, DIAL_RING_R * 2, DIAL_RING_R * 2);
+    lv_obj_set_pos(widget->ring, DIAL_CX - DIAL_RING_R, DIAL_CY - DIAL_RING_R);
+    lv_arc_set_rotation(widget->ring, 270);
+    lv_arc_set_bg_angles(widget->ring, 0, 0);
+    lv_arc_set_angles(widget->ring, 0, 0);
+    lv_obj_set_style_arc_width(widget->ring, DIAL_RING_W, LV_PART_MAIN);
+    lv_obj_set_style_arc_width(widget->ring, DIAL_RING_W, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_color(widget->ring, lv_color_hex(DISPLAY_COLOR_DIAL_BLOCK), LV_PART_MAIN);
+    lv_obj_set_style_arc_color(widget->ring, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_ACTIVE), LV_PART_INDICATOR);
+    lv_obj_set_style_bg_opa(widget->ring, LV_OPA_TRANSP, LV_PART_MAIN);
+    lv_obj_set_style_border_width(widget->ring, 0, LV_PART_MAIN);
+    lv_obj_add_flag(widget->ring, LV_OBJ_FLAG_HIDDEN);
 
     widget->hand_points[0].x = DIAL_CX;
     widget->hand_points[0].y = DIAL_CY;
