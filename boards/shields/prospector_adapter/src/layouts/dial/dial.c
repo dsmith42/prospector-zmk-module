@@ -2,6 +2,9 @@
 
 #include <zephyr/kernel.h>
 #include <math.h>
+
+/* Zephyr's math.h does not expose M_PI without _GNU_SOURCE. */
+#define DIAL_PI 3.14159265358979323846
 #include <zmk/display.h>
 #include <zmk/events/block_timer_state_changed.h>
 #include <zmk/event_manager.h>
@@ -33,7 +36,7 @@ static void dial_render(int angle_tenths, int minutes) {
              * the top in init, so the indicator is simply 0 -> sweep. */
             lv_arc_set_angles(widget->arc, 0, angle_tenths / 10);
 
-            double rad = (angle_tenths / 10.0 - 90.0) * M_PI / 180.0;
+            double rad = (angle_tenths / 10.0 - 90.0) * DIAL_PI / 180.0;
             widget->hand_points[1].x = DIAL_CX + (DIAL_R + 4) * cos(rad);
             widget->hand_points[1].y = DIAL_CY + (DIAL_R + 4) * sin(rad);
             lv_line_set_points(widget->hand, widget->hand_points, 2);
@@ -96,7 +99,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
 
     /* Ticks first so the disc paints over their inner ends. */
     for (int i = 0; i < DIAL_TICK_COUNT; i++) {
-        double rad = (360.0 * i / DIAL_TICK_COUNT - 90.0) * M_PI / 180.0;
+        double rad = (360.0 * i / DIAL_TICK_COUNT - 90.0) * DIAL_PI / 180.0;
         int len = DIAL_TICK_OUT - DIAL_TICK_IN;
         int mx = DIAL_CX + (DIAL_TICK_IN + len / 2) * cos(rad);
         int my = DIAL_CY + (DIAL_TICK_IN + len / 2) * sin(rad);
