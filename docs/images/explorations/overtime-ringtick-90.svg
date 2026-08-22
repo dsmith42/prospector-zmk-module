@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="480" viewBox="0 0 280 240" role="img" aria-label="ring concept, 90 minutes remaining">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107" cy="106" r="86" fill="none" stroke="#242424" stroke-width="5"/>
+<circle cx="107" cy="106" r="74" fill="#242424"/>
+<circle cx="107" cy="106" r="74" fill="#e8871e"/>
+<path d="M 107 20 A 86 86 0 0 1 107.0 192.0" fill="none" stroke="#e8871e" stroke-width="5" stroke-linecap="butt"/>
+<circle cx="107.0" cy="20.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="150.0" cy="31.5" r="1.6" fill="#9a9a9a"/>
+<circle cx="181.5" cy="63.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="193.0" cy="106.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="181.5" cy="149.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="150.0" cy="180.5" r="1.6" fill="#9a9a9a"/>
+<circle cx="107.0" cy="192.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="64.0" cy="180.5" r="1.6" fill="#9a9a9a"/>
+<circle cx="32.5" cy="149.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="21.0" cy="106.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="32.5" cy="63.0" r="1.6" fill="#9a9a9a"/>
+<circle cx="64.0" cy="31.5" r="1.6" fill="#9a9a9a"/>
+<line x1="107" y1="106" x2="107.0" y2="198.0" stroke="#ffab52" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="46" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">90</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#b1e5f0">BASE</text>
+<text x="150" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">CMD</text>
+<text x="190" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">OPT</text>
+<text x="230" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">CTL</text>
+<text x="270" y="234" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" font-weight="600" fill="#3b527c">SFT</text>
+</svg>
