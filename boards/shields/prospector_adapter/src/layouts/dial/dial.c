@@ -140,7 +140,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     lv_line_set_points(widget->hand, widget->hand_points, 2);
     lv_obj_set_style_line_width(widget->hand, 4, LV_PART_MAIN);
     lv_obj_set_style_line_rounded(widget->hand, true, LV_PART_MAIN);
-    lv_obj_set_style_line_color(widget->hand, lv_color_hex(DISPLAY_COLOR_TIMER_BAR_ACTIVE), LV_PART_MAIN);
+    lv_obj_set_style_line_color(widget->hand, lv_color_hex(DISPLAY_COLOR_DIAL_HAND), LV_PART_MAIN);
 
     widget->hub = lv_obj_create(widget->obj);
     lv_obj_set_size(widget->hub, DIAL_HUB_R * 2, DIAL_HUB_R * 2);

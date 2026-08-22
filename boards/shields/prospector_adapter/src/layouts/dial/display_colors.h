@@ -15,6 +15,9 @@
 
 /* Dial layout. Minutes and profile are deliberately muted — diagnostics, not
    ambient. Orange stays reserved for the dial itself. */
+/* Hand is a brighter orange than the wedge so it stays legible where it sits
+   on top of the filled remainder, rather than disappearing into it. */
+#define DISPLAY_COLOR_DIAL_HAND        0xffab52
 #define DISPLAY_COLOR_DIAL_TICK        0x9a9a9a
 #define DISPLAY_COLOR_DIAL_HUB         0xd8d4cc
 #define DISPLAY_COLOR_DIAL_MINUTES     0x8a8a8a

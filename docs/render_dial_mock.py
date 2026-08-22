@@ -64,10 +64,11 @@ def font_for(pattern):
     return FONT_PX[m.group(1)]
 
 
-def render(minutes_left, layer, batt, profile, mods):
+def render(minutes_left, layer, batt, profile, mods, usb=False):
     active = colour("DISPLAY_COLOR_TIMER_BAR_ACTIVE")
     track = colour("DISPLAY_COLOR_TIMER_BAR_SPENT")
     tick_col = colour("DISPLAY_COLOR_DIAL_TICK")
+    hand_col = colour("DISPLAY_COLOR_DIAL_HAND")
     hub_col = colour("DISPLAY_COLOR_DIAL_HUB")
     min_col = colour("DISPLAY_COLOR_DIAL_MINUTES")
     prof_col = colour("DISPLAY_COLOR_DIAL_PROFILE")
@@ -102,14 +103,14 @@ def render(minutes_left, layer, batt, profile, mods):
 
     a = math.radians(-90 + 360 * frac)
     o.append(f'<line x1="{CX}" y1="{CY}" x2="{CX + (DIAL_R+4)*math.cos(a):.1f}" '
-             f'y2="{CY + (DIAL_R+4)*math.sin(a):.1f}" stroke="{active}" stroke-width="4" '
+             f'y2="{CY + (DIAL_R+4)*math.sin(a):.1f}" stroke="{hand_col}" stroke-width="4" '
              f'stroke-linecap="round"/>')
     o.append(f'<circle cx="{CX}" cy="{CY}" r="{HUB_R}" fill="{hub_col}"/>')
 
     o.append(f'<text x="{PANEL_W-10}" y="{22+32}" text-anchor="end" font-family="{mono}" '
              f'font-size="32" fill="{min_col}">{minutes_left}</text>')
     o.append(f'<text x="{PANEL_W-10}" y="{154+20}" text-anchor="end" font-family="{mono}" '
-             f'font-size="20" fill="{prof_col}">B{profile}</text>')
+             f'font-size="20" fill="{prof_col}">{"USB" if usb else f"B {profile}"}</text>')
     for i, (dx, pct) in enumerate(zip((-46, -10), batt)):
         o.append(f'<text x="{PANEL_W+dx}" y="{184+24}" text-anchor="end" font-family="{mono}" '
                  f'font-size="24" fill="{low_col if pct < LOW else batt_col}">{pct}</text>')
@@ -132,9 +133,10 @@ if __name__ == "__main__":
     ap.add_argument("--battery", type=int, nargs=2, default=(87, 89), metavar=("L", "R"))
     ap.add_argument("--profile", type=int, default=2)
     ap.add_argument("--mods", default="")
+    ap.add_argument("--usb", action="store_true", help="show USB instead of a BLE profile")
     ap.add_argument("--out", default="docs/images/dial-layout.svg")
     a = ap.parse_args()
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(a.minutes, a.layer, a.battery, a.profile, a.mods))
+    out.write_text(render(a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb))
     print(f"wrote {out.relative_to(ROOT)}")

@@ -8,6 +8,8 @@
 #include <zmk/events/keycode_state_changed.h>
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/events/ble_active_profile_changed.h>
+#include <zmk/events/endpoint_changed.h>
+#include <zmk/endpoints.h>
 #include <zmk/hid.h>
 #include <zmk/keymap.h>
 #include <zmk/ble.h>
@@ -32,6 +34,7 @@ struct mods_state {
 
 struct profile_state {
     uint8_t index;
+    bool usb;
 };
 
 struct battery_state {
@@ -96,13 +99,23 @@ static void profile_update_cb(struct profile_state state) {
     struct zmk_widget_status_text *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         char text[6];
-        snprintf(text, sizeof(text), "B%d", state.index + 1);
+        if (state.usb) {
+            snprintf(text, sizeof(text), "USB");
+        } else {
+            /* Spaced: "B 1" rather than "B1", which reads cramped at this size. */
+            snprintf(text, sizeof(text), "B %d", state.index + 1);
+        }
         lv_label_set_text(widget->profile_label, text);
     }
 }
 
 static struct profile_state profile_get_state(const zmk_event_t *eh) {
-    return (struct profile_state){.index = zmk_ble_active_profile_index()};
+    struct zmk_endpoint_instance selected = zmk_endpoint_get_selected();
+
+    return (struct profile_state){
+        .index = zmk_ble_active_profile_index(),
+        .usb = (selected.transport == ZMK_TRANSPORT_USB),
+    };
 }
 
 static void battery_render(void) {
@@ -146,6 +159,7 @@ ZMK_SUBSCRIPTION(widget_status_mods, zmk_keycode_state_changed);
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_status_profile, struct profile_state, profile_update_cb, profile_get_state)
 ZMK_SUBSCRIPTION(widget_status_profile, zmk_ble_active_profile_changed);
+ZMK_SUBSCRIPTION(widget_status_profile, zmk_endpoint_changed);
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_status_battery, struct battery_state, battery_update_cb, battery_get_state)
 ZMK_SUBSCRIPTION(widget_status_battery, zmk_peripheral_battery_state_changed);
@@ -170,7 +184,7 @@ int zmk_widget_status_text_init(struct zmk_widget_status_text *widget, lv_obj_t 
     /* Profile above the batteries; batteries side by side, position carrying
      * left/right so no L/R prefixes are needed. */
     widget->profile_label = make_label(widget->obj, &DINishCondensed_SemiBold_20,
-                                       DISPLAY_COLOR_DIAL_PROFILE, "B1",
+                                       DISPLAY_COLOR_DIAL_PROFILE, "B 1",
                                        LV_ALIGN_TOP_RIGHT, -10, 154);
 
     static const int battery_x[STATUS_PERIPHERAL_COUNT] = {-46, -10};

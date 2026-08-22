@@ -15,9 +15,9 @@
 
 #define DIAL_CX 107
 #define DIAL_CY 106
-#define DIAL_R 84
-#define DIAL_TICK_IN (DIAL_R + 8)
-#define DIAL_TICK_OUT (DIAL_R + 16)
+#define DIAL_R 78
+#define DIAL_TICK_IN (DIAL_R + 14)
+#define DIAL_TICK_OUT (DIAL_R + 22)
 #define DIAL_HUB_R 8
 
 struct zmk_widget_dial {
