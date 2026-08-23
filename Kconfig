@@ -104,9 +104,9 @@ config PROSPECTOR_LAYER_FONT_JP
       label, so a keymap can set display-name to something like 基本 or 集中.
 
       Only the characters actually needed are baked in -- currently 18 glyphs
-      for roughly 1.7 KB of flash, against about 450 KB for a full CJK face.
+      for roughly 2.3 KB of flash, against about 550 KB for a full CJK face.
       Extend the set by editing SYMBOLS in scripts/gen_jp_font.sh and re-running
       it; see the layer name table in README.md.
 
-      Kanji are also narrower than the Latin they replace: 集中 is 32px where
+      Kanji are also narrower than the Latin they replace: 集中 is 36px where
       "TIMER" is around 65px.

@@ -3,9 +3,9 @@
 # Regenerate the Japanese glyph subset used for layer names.
 #
 # The point of this script is that we never ship a whole CJK face. M PLUS 1
-# covers the full jouyou set, which at 16px/4bpp is roughly 450 KB of flash --
+# covers the full jouyou set, which at 18px/4bpp is roughly 550 KB of flash --
 # far more than the dongle has spare. Instead we bake only the characters that
-# actually appear on the display, which is currently 18 glyphs for about 1.7 KB.
+# actually appear on the display, which is currently 18 glyphs for about 2.3 KB.
 #
 # To add a layer name, append its characters to SYMBOLS and re-run. Duplicates
 # are harmless; lv_font_conv de-duplicates.
@@ -15,7 +15,7 @@
 
 set -euo pipefail
 
-SIZE=16
+SIZE=18
 BPP=4
 OUT_NAME="MPLUS1_JP_${SIZE}"
 
@@ -63,6 +63,7 @@ rm -f "$out_dir/${OUT_NAME}.c.bak"
 
 echo "Wrote $out_dir/${OUT_NAME}.c ($(wc -c < "$out_dir/${OUT_NAME}.c") bytes of C)"
 echo
-echo "Note: 16px is not arbitrary. At that size an M PLUS glyph box is 14px"
-echo "tall, which is exactly the cap height of FG_Medium_20, so Japanese and"
-echo "Latin layer names share a visual line. Changing SIZE breaks that match."
+echo "Note: SIZE is tuned against the Latin face it sits beside, whose caps are"
+echo "14px tall. 18px puts the kanji box at 16px, a deliberate overshoot so the"
+echo "denser glyphs hold up at a glance; 16px matches the cap height exactly and"
+echo "reads noticeably smaller. Below 16px the strokes start to fill in."

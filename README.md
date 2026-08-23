@@ -267,11 +267,11 @@ cost it — one kanji becomes two to six kana. The timer layer is the worst case
 ```
 集中          →   しゅうちゅう
 2 squares        6 squares
-32 px            96 px
+36 px            108 px
 ```
 
-Kanji are in fact *narrower* than the Latin they replace. At 16px each glyph
-advances 16px, so 集中 is 32px against roughly 65px for "TIMER".
+Kanji are in fact *narrower* than the Latin they replace. At 18px each glyph
+advances 18px, so 集中 is 36px against roughly 65px for "TIMER".
 
 Mixed kanji-and-katakana is also what a Japanese interface genuinely looks like;
 all-hiragana reads as children's material.
@@ -279,7 +279,7 @@ all-hiragana reads as children's material.
 ### Extending the set
 
 Only the characters actually used are baked in — currently 18 glyphs for about
-1.7 KB of flash, against roughly 450 KB for a full CJK face. To add a name, append
+2.3 KB of flash, against roughly 550 KB for a full CJK face. To add a name, append
 its characters to `SYMBOLS` in [`scripts/gen_jp_font.sh`](scripts/gen_jp_font.sh)
 and re-run it:
 
@@ -287,9 +287,19 @@ and re-run it:
 ./scripts/gen_jp_font.sh
 ```
 
-The size is fixed at 16px for a reason: an M PLUS glyph box is then 14px tall,
-which is exactly the cap height of the 20px `FG_Medium_20` Latin face beside it,
-so the two scripts sit on one visual line. Changing the size breaks that match.
+`SIZE` is tuned against the Latin face beside it, whose caps are 14px tall:
+
+| `SIZE` | Glyph box | Top vs Latin caps | 集中 |
+| ------ | --------- | ----------------- | ---- |
+| 16px | 14x14 | level | 32px |
+| 17px | 16x15 | level | 34px |
+| **18px** | **16x16** | **+1px** | **36px** |
+| 19px | 17x17 | +1px | 38px |
+
+18px is the shipped value. Matching the cap height exactly (16px) reads noticeably
+small, because kanji carry more internal detail than a Latin capital and need the
+extra body to stay legible at a glance; the 1px overshoot is deliberate. Below
+16px the strokes begin to fill in.
 
 Other layouts can opt in with one call — see `prospector_font_jp()` in
 [`font_fallback.h`](boards/shields/prospector_adapter/include/font_fallback.h);
