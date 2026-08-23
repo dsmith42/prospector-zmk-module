@@ -15,6 +15,7 @@
 #include <zmk/ble.h>
 
 #include <fonts.h>
+#include <font_fallback.h>
 #include <symbols.h>
 #include "display_colors.h"
 
@@ -49,7 +50,11 @@ static void layer_update_cb(struct layer_state state) {
     struct zmk_widget_status_text *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         const char *name = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(state.index));
-        char display_name[16];
+        /* Sized in bytes, not characters. A five character Japanese name is
+         * fifteen bytes of UTF-8, and truncating one mid-sequence leaves a
+         * partial codepoint that renders as a missing glyph rather than a
+         * short name, so there is headroom here deliberately. */
+        char display_name[32];
 
         if (name && *name) {
             snprintf(display_name, sizeof(display_name), "%s", name);
@@ -58,8 +63,16 @@ static void layer_update_cb(struct layer_state state) {
         }
 
 #if IS_ENABLED(CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE)
+        /* Bytewise, so skip anything with the high bit set: those are UTF-8
+         * continuation and lead bytes, and passing them through toupper() is
+         * locale dependent for values above 0x7F. Japanese has no case, so
+         * there is nothing to convert anyway. */
         for (int i = 0; display_name[i]; i++) {
-            display_name[i] = toupper((unsigned char)display_name[i]);
+            unsigned char c = (unsigned char)display_name[i];
+
+            if (c < 0x80) {
+                display_name[i] = (char)toupper(c);
+            }
         }
 #endif
 
@@ -196,8 +209,12 @@ int zmk_widget_status_text_init(struct zmk_widget_status_text *widget, lv_obj_t 
 
     /* Bottom row: layer far left, modifiers far right on one baseline, so a
      * chord is scanned in a single movement. */
-    widget->layer_label = make_label(widget->obj, &FG_Medium_20, DISPLAY_COLOR_MOD_ACTIVE,
-                                     "", LV_ALIGN_BOTTOM_LEFT, 10, -6);
+    /* Static because the label holds the pointer for the lifetime of the
+     * screen; see font_fallback.h for why the wrapper is needed at all. */
+    static lv_font_t layer_font;
+
+    widget->layer_label = make_label(widget->obj, prospector_font_jp(&FG_Medium_20, &layer_font),
+                                     DISPLAY_COLOR_MOD_ACTIVE, "", LV_ALIGN_BOTTOM_LEFT, 10, -6);
 
     /* Glyphs rather than CMD/OPT/CTL/SFT: a symbol is recognised without being
      * read, which is what the rest of this screen is built around. They are

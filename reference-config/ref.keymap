@@ -36,7 +36,11 @@
         };
 
         second_layer {
-            display-name = "Second";
+            /* Deliberately Japanese: the ref-dial-jp build target turns on
+             * CONFIG_PROSPECTOR_LAYER_FONT_JP, so this exercises the UTF-8
+             * path through the layer label. The other targets keep it too,
+             * where it simply renders as a missing glyph — harmless in CI. */
+            display-name = "集中";
             bindings = <
 &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_CLR  &trans &trans &trans &trans &trans
 &trans &trans &trans &trans &trans                              &trans &trans &trans &trans &trans

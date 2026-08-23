@@ -24,7 +24,8 @@ workflow changes are needed.
     artifact-name: ref-dial
 ```
 
-All five status screen layouts are built by default, so a change to shared code
+All five status screen layouts are built by default, plus a second dial build
+with the Japanese fallback font linked in, so a change to shared code
 — fonts, symbols, the status screen dispatch in `custom_status_screen.c` —
 cannot break one layout while another still compiles. Those four files are easy
 to forget: adding a layout means touching `Kconfig`, the shield `CMakeLists.txt`,

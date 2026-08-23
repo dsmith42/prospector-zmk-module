@@ -51,3 +51,10 @@ LV_FONT_DECLARE(DINishCondensed_SemiBold_20);
 LV_FONT_DECLARE(FG_Medium_20);
 
 #endif
+
+/* Not part of the per-layout blocks above: the Japanese subset is a fallback
+ * hung off whichever face a layout already uses, so it is declared once for
+ * everyone rather than repeated per layout. */
+#if defined(CONFIG_PROSPECTOR_LAYER_FONT_JP)
+LV_FONT_DECLARE(MPLUS1_JP_18);
+#endif

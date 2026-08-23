@@ -25,6 +25,7 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 - [Focus Block Timer](#focus-block-timer)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Japanese Layer Names](#japanese-layer-names)
 - [Development](#development)
 - [Troubleshooting](#troubleshooting)
 - [Known Issues](#known-issues)
@@ -204,7 +205,8 @@ CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
 | `CONFIG_PROSPECTOR_ROTATE_DISPLAY_180` | Rotate the display 180 degrees | n |
 | `CONFIG_PROSPECTOR_USE_AMBIENT_LIGHT_SENSOR` | Use ambient light sensor for auto brightness | y |
 | `CONFIG_PROSPECTOR_FIXED_BRIGHTNESS` | Fixed display brightness when not using ambient light sensor | 50 (1-100) |
-| `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase (Operator and Radii only) | y |
+| `CONFIG_PROSPECTOR_LAYER_NAME_UPPERCASE` | Convert layer names to uppercase (Operator, Radii and Dial) | y |
+| `CONFIG_PROSPECTOR_LAYER_FONT_JP` | Render Japanese layer names, see [Japanese layer names](#japanese-layer-names) | n |
 
 ### Modifiers
 | Name | Description | Default |
@@ -219,6 +221,94 @@ CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
 | `CONFIG_PROSPECTOR_ANIMATION_WPM_REFERENCE` | WPM value at which animation reaches max speed | 70 |
 | `CONFIG_PROSPECTOR_ANIMATION_INTENSITY_DECAY_SEC` | Seconds for lines to fade out after typing stops | 30 |
 | `CONFIG_PROSPECTOR_ANIMATION_FLOW_DECAY_SEC` | Seconds for line directions and length to settle | 300 |
+
+## Japanese Layer Names
+
+The bundled Latin faces are ASCII subsets, so setting `display-name = "基本"` in a
+keymap draws nothing at all by default. Turning on `CONFIG_PROSPECTOR_LAYER_FONT_JP`
+hangs a small Japanese font off LVGL's fallback chain behind the layer label: the
+Latin face keeps drawing Latin, and only the codepoints it lacks fall through.
+
+![Dial layout with a Japanese layer name](docs/images/dial-layout-jp.svg)
+
+### The names
+
+These are the characters baked into the subset. Each pairs a layer with the word
+a Japanese interface would actually use for it, rather than a transliteration.
+
+| Layer | Japanese | Reading | Rōmaji | Literally | Meaning |
+| ----- | -------- | ------- | ------ | --------- | ------- |
+| Base | 基本 | きほん | *kihon* | 基 foundation + 本 origin | the basics, the fundamental thing |
+| Symbol | 記号 | きごう | *kigō* | 記 record + 号 mark | a written mark; the standard word for punctuation and math symbols |
+| Number | 数字 | すうじ | *sūji* | 数 number + 字 character | a numeral, a digit as written |
+| Nav | 移動 | いどう | *idō* | 移 shift + 動 move | movement, getting from one place to another |
+| Arrange | 配置 | はいち | *haichi* | 配 distribute + 置 place | placement, how things are positioned in a space |
+| QWERTY | QWERTY | — | — | — | a proper noun; Japanese leaves it in Latin |
+| Mouse | マウス | — | *mausu* | — | katakana loanword, the only word for the device |
+| Timer | 集中 | しゅうちゅう | *shūchū* | 集 gather + 中 centre | concentration, focus; as in 集中力, the faculty of concentrating |
+
+Two of those are choices rather than translations.
+
+**集中 rather than タイマー.** The timer layer exists to start focus blocks, so naming
+it for the state rather than the mechanism reads better — and "gathering into the
+centre" is a fair description of what a focus block is for. タイマー (*taimā*) is in
+the subset too if you prefer the literal one.
+
+**配置 rather than 配列.** 配列 (*hairetsu*) is tempting because it is the word in
+QWERTY配列 and it means "array" in programming, but it describes an arrangement in
+*sequence*. The Arrange layer does window placement — halves, thirds, corners — which
+is 配置. 整列 (*seiretsu*, align into rows) is the other near miss.
+
+### Why kanji and not kana
+
+Kana are full-width squares exactly like kanji, so they do not save space, they
+cost it — one kanji becomes two to six kana. The timer layer is the worst case:
+
+```
+集中          →   しゅうちゅう
+2 squares        6 squares
+36 px            108 px
+```
+
+Kanji are in fact *narrower* than the Latin they replace. At 18px each glyph
+advances 18px, so 集中 is 36px against roughly 65px for "TIMER".
+
+Mixed kanji-and-katakana is also what a Japanese interface genuinely looks like;
+all-hiragana reads as children's material.
+
+### Extending the set
+
+Only the characters actually used are baked in — currently 18 glyphs for about
+2.3 KB of flash, against roughly 550 KB for a full CJK face. To add a name, append
+its characters to `SYMBOLS` in [`scripts/gen_jp_font.sh`](scripts/gen_jp_font.sh)
+and re-run it:
+
+```sh
+./scripts/gen_jp_font.sh
+```
+
+`SIZE` is tuned against the Latin face beside it, whose caps are 14px tall:
+
+| `SIZE` | Glyph box | Top vs Latin caps | 集中 |
+| ------ | --------- | ----------------- | ---- |
+| 16px | 14x14 | level | 32px |
+| 17px | 16x15 | level | 34px |
+| **18px** | **16x16** | **+1px** | **36px** |
+| 19px | 17x17 | +1px | 38px |
+
+18px is the shipped value. Matching the cap height exactly (16px) reads noticeably
+small, because kanji carry more internal detail than a Latin capital and need the
+extra body to stay legible at a glance; the 1px overshoot is deliberate. Below
+16px the strokes begin to fill in.
+
+Other layouts can opt in with one call — see `prospector_font_jp()` in
+[`font_fallback.h`](boards/shields/prospector_adapter/include/font_fallback.h);
+only the Dial layout wires it up today.
+
+The font is [M PLUS 1](https://github.com/coz-m/MPLUS_FONTS) Medium, SIL Open Font
+License 1.1, chosen because it is a geometric grotesque and so the closest
+Japanese match to the Latin it sits beside. Licence text is alongside the
+generated font in `src/fonts/MPLUS1-OFL.txt`.
 
 ## Development
 
