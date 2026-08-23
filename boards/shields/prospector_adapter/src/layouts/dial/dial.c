@@ -111,8 +111,8 @@ static void dial_render(int disc_track, int disc_fill, int ring_track, int ring_
 
         if (hand_deg != prev_hand) {
             double rad = (hand_deg - 90.0) * DIAL_PI / 180.0;
-            widget->hand_points[1].x = DIAL_CX + (DIAL_R + 4) * cos(rad);
-            widget->hand_points[1].y = DIAL_CY + (DIAL_R + 4) * sin(rad);
+            widget->hand_points[1].x = DIAL_CX + DIAL_HAND_R * cos(rad);
+            widget->hand_points[1].y = DIAL_CY + DIAL_HAND_R * sin(rad);
             lv_line_set_points(widget->hand, widget->hand_points, 2);
         }
 
@@ -279,7 +279,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     widget->hand_points[0].x = DIAL_CX;
     widget->hand_points[0].y = DIAL_CY;
     widget->hand_points[1].x = DIAL_CX;
-    widget->hand_points[1].y = DIAL_CY - (DIAL_R + 4);
+    widget->hand_points[1].y = DIAL_CY - DIAL_HAND_R;
 
     widget->hand = lv_line_create(widget->obj);
     lv_line_set_points(widget->hand, widget->hand_points, 2);

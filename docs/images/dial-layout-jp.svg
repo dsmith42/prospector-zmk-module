@@ -15,7 +15,7 @@
 <circle cx="107" cy="106" r="71" fill="#242424"/>
 <path d="M 107 106 L 107 35 A 71 71 0 1 1 36.0 106.0 Z" fill="#3a3a3a"/>
 <path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#f7931b"/>
-<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#fabe76" stroke-width="4" stroke-linecap="round"/>
+<line x1="107" y1="106" x2="173.3" y2="154.2" stroke="#fabe76" stroke-width="4" stroke-linecap="round"/>
 <circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
 <text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
 <text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
