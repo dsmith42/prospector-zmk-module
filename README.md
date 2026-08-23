@@ -100,7 +100,7 @@ Fork-only. A focus-block countdown, rendered two ways.
 
 ![Dial layout, 21 minutes remaining of a running block](docs/images/dial-layout.svg)
 
-Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every five minutes; the hand marks the boundary in a brighter orange so it stays legible on top of the filled wedge.
+Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every five minutes; the hand marks the boundary in a lighter shade of the theme colour — derived from it rather than set per theme — so it stays legible on top of the filled wedge.
 
 Selecting a length **arms** it without starting anything, and the dial previews it dimmed — so choosing is visible rather than a hidden mode:
 
@@ -167,8 +167,8 @@ First tap does nothing, double tap starts, triple tap stops. Pairing that with a
 ### Behaviour
 
 - **Minutes round up**, so it never reads finished with 59 seconds left.
-- **Armed length previews on the dial** in a dimmed orange before it starts, so selecting a length is visible rather than a hidden mode.
-- **One colour throughout** — orange for remaining, grey for spent. No green/amber/red transition: that reads as a deadline, and the timer is meant as pacing.
+- **Armed length previews on the dial** dimmed before it starts, so selecting a length is visible rather than a hidden mode.
+- **One colour throughout** — the theme colour for remaining, grey for spent. No green/amber/red transition: that reads as a deadline, and the timer is meant as pacing.
 - **At zero it stops ticking and sits at 0** — empty dial, or empty bar on Operator. No flash, no inversion, no colour change. Deliberately identical to the pre-start state: one quiet state rather than two.
 
 State is a single absolute deadline, with remaining time recomputed from the monotonic uptime clock at render. Nothing that happens to the display affects it, and there is no drift and no clock to set. It is RAM-only: a power cycle is a fresh state, and there is no wall clock to sync.
