@@ -5,8 +5,14 @@ Renders every dial_*_theme found in prospector_adapter.overlay, so adding a
 theme adds a tile with no change here.
 
     python3 docs/render_theme_grid.py
+    python3 docs/render_theme_grid.py --layer 基本 --out docs/images/theme-grid-jp.svg
+
+The layer name is a parameter because the README shows the same six themes with
+Latin and with Japanese names, and the two have to be generated from one source
+or they drift apart.
 """
 
+import argparse
 import re
 import subprocess
 import sys
@@ -24,17 +30,27 @@ def themes():
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--layer", default="BASE")
+    ap.add_argument("--out", default="docs/images/theme-grid.svg")
+    a = ap.parse_args()
+
     found = themes()
     if not found:
         sys.exit("no dial_*_theme nodes found")
 
+    # Per-theme tiles are intermediates, but they are keyed off the output name
+    # so a Latin run and a Japanese run do not overwrite each other's files.
+    stem = Path(a.out).stem.replace("theme-grid", "").lstrip("-")
+    suffix = f"-{stem}" if stem else ""
+
     tiles = []
     for name in found:
-        out = ROOT / f"docs/images/theme-{name.split('_')[1]}.svg"
+        out = ROOT / f"docs/images/theme-{name.split('_')[1]}{suffix}.svg"
         subprocess.run(
             [sys.executable, str(ROOT / "docs/render_dial_mock.py"),
-             "--minutes", "21", "--total", "30", "--theme", name, "--out",
-             str(out.relative_to(ROOT))],
+             "--minutes", "21", "--total", "30", "--theme", name,
+             "--layer", a.layer, "--out", str(out.relative_to(ROOT))],
             cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
         body = out.read_text()
         body = body[body.index(">") + 1: body.rindex("</svg>")]
@@ -61,7 +77,7 @@ def main():
         o.append("</g>")
 
     o.append("</svg>")
-    dest = ROOT / "docs/images/theme-grid.svg"
+    dest = ROOT / a.out
     dest.write_text("\n".join(o))
     print(f"wrote {dest.relative_to(ROOT)} — {len(tiles)} themes")
 
