@@ -1,6 +1,17 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+# Pushing a branch that has an open PR fires both `push` and `pull_request`,
+# which ran the whole matrix twice for every commit. Restricting push to the
+# default branch keeps the post-merge build -- the one that produces current
+# firmware from block-timer -- while PRs cover everything else exactly once.
+#
+# Trade: a branch pushed without an open PR no longer builds. Open the PR, or
+# use workflow_dispatch.
+on:
+  push:
+    branches: [block-timer]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   # A ZMK module is only compiled when a keyboard config pulls it in, so CI
