@@ -1,7 +1,7 @@
 # Reference config
 
 The module cannot be built on its own — a ZMK module is only compiled when a
-keyboard config pulls it in. `reference-config/` is the smallest config that
+keyboard config pulls it in. This is the smallest config that
 exercises this one, and CI builds it on every push and pull request.
 
 ```
@@ -66,7 +66,7 @@ place would put it inside `tests/`.
 MODULE=/path/to/prospector-zmk-module
 
 mkdir -p ~/zmk-ws && cd ~/zmk-ws
-cp -r "$MODULE/tests/reference-config" config
+cp -r "$MODULE/reference-config" config
 west init -l config
 west update
 west zephyr-export
@@ -77,3 +77,10 @@ west build -s zmk/app -b "xiao_ble//zmk" -- \
   -DSHIELD="ref_dongle prospector_adapter" \
   -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y
 ```
+
+## Why this sits at the repository root
+
+ZMK's `build-user-config.yml` creates its isolated workspace with a
+non-recursive `mkdir "$base_dir/$config_path"`, so a nested `config_path` such
+as `tests/reference-config` fails before anything is built. A single-level
+directory is the only shape that works.

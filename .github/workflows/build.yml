@@ -4,8 +4,8 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   # A ZMK module is only compiled when a keyboard config pulls it in, so CI
-  # builds one: tests/reference-config, a keyless split central with the
-  # display. See tests/README.md.
+  # builds one: reference-config/, a keyless split central with the display.
+  # See reference-config/README.md.
   #
   # ZMK's reusable workflow detects that this repo is itself a module (it has
   # zephyr/module.yml) and passes the checkout as ZMK_EXTRA_MODULES, building
@@ -14,8 +14,8 @@ jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
     with:
-      build_matrix_path: tests/reference-config/build.yaml
-      config_path: tests/reference-config
+      build_matrix_path: reference-config/build.yaml
+      config_path: reference-config
 
   # Single stable check for branch protection. Matrix job names change whenever
   # build.yaml is edited; this one never does, so it can be required once.

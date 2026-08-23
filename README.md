@@ -223,8 +223,8 @@ CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
 ## Development
 
 The module is built on every push and pull request against a minimal reference
-keyboard config in [`tests/`](tests/README.md), covering all five status screen
-layouts. Add a build target by appending to `tests/reference-config/targets.yaml`
+keyboard config in [`reference-config/`](reference-config/README.md), covering all five status screen
+layouts. Add a build target by appending to `reference-config/build.yaml`
 — the CI matrix is generated from that file.
 
 ## Troubleshooting
