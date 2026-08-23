@@ -30,6 +30,16 @@
 #define DIAL_RING_R (DIAL_R + 13)
 #define DIAL_RING_W 5
 
+/* The hand runs out to the centre line of the overflow ring band. LVGL strokes
+   an arc inward from the radius it is given, so the band occupies
+   DIAL_RING_R - DIAL_RING_W .. DIAL_RING_R and its middle is half a width in.
+   Rounds outward by half a pixel; the alternative is half a pixel the other way.
+
+   Constant, deliberately. The ring only appears past the hour, and a hand that
+   grew when it did would read as two different hands rather than one that
+   always points at the same track. */
+#define DIAL_HAND_R (DIAL_RING_R - DIAL_RING_W / 2)
+
 struct zmk_widget_dial {
     sys_snode_t node;
     lv_obj_t *obj;

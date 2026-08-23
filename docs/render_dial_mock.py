@@ -121,6 +121,9 @@ TICK_IN = DIAL_R + int(re.search(r"#define DIAL_TICK_IN \(DIAL_R \+ (\d+)\)", h)
 TICK_OUT = DIAL_R + int(re.search(r"#define DIAL_TICK_OUT \(DIAL_R \+ (\d+)\)", h).group(1))
 RING_R = DIAL_R + int(re.search(r"#define DIAL_RING_R \(DIAL_R \+ (\d+)\)", h).group(1))
 RING_W = int(re.search(r"#define DIAL_RING_W (\d+)", h).group(1))
+# Mirrors DIAL_HAND_R in dial.h — the hand reaches the centre line of the ring
+# band. Same integer division as the C, so the two round identically.
+HAND_R = RING_R - RING_W // 2
 LOW = int(re.search(r"#define BATTERY_LOW_PCT (\d+)", src("status_text.c")).group(1))
 
 # Font sizes are inferred from the bundled font names used in status_text.c.
@@ -203,8 +206,8 @@ def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=Fal
         o.append(ring(RING_R, ring_fill, active, RING_W))
 
     a = math.radians(-90 + 360 * ((minutes_left % FACE) / FACE))
-    o.append(f'<line x1="{CX}" y1="{CY}" x2="{CX + (DIAL_R+4)*math.cos(a):.1f}" '
-             f'y2="{CY + (DIAL_R+4)*math.sin(a):.1f}" stroke="{hand_col}" stroke-width="4" '
+    o.append(f'<line x1="{CX}" y1="{CY}" x2="{CX + HAND_R*math.cos(a):.1f}" '
+             f'y2="{CY + HAND_R*math.sin(a):.1f}" stroke="{hand_col}" stroke-width="4" '
              f'stroke-linecap="round"/>')
     o.append(f'<circle cx="{CX}" cy="{CY}" r="{HUB_R}" fill="{hub_col}"/>')
 
