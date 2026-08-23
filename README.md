@@ -191,7 +191,7 @@ keymap change rather than a module edit. Six ship in
 | `dial_lime_theme` | `0xA8D94A` |
 | `dial_ice_theme` | `0x5AB8F7` |
 
-Select one with a `chosen` node in your keymap or shield overlay:
+Select one with a `chosen` node:
 
 ```dts
 / {
@@ -202,6 +202,14 @@ Select one with a `chosen` node in your keymap or shield overlay:
 ```
 
 With nothing chosen, `dial_amber_theme` is used.
+
+> **On a split keyboard, put this in the overlay for the board that has the
+> display — not in your keymap.** The theme nodes are defined in this module's
+> `prospector_adapter.overlay`, which only the display build applies. Split
+> peripherals compile the shared keymap but not that overlay, so a reference
+> from there fails them all with `undefined node label 'dial_teal_theme'`.
+> On a unibody, or anywhere the keymap is only compiled by the board carrying
+> the display, the keymap is fine.
 
 The same six with [Japanese layer names](#japanese-layer-names):
 
