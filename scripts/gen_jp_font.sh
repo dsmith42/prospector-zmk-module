@@ -50,6 +50,19 @@ npx -y lv_font_conv@1.5.2 \
     --symbols "$SYMBOLS" \
     -o "$out_dir/${OUT_NAME}.c"
 
+# lv_font_conv emits a conditional include that resolves to "lvgl/lvgl.h" unless
+# LV_LVGL_H_INCLUDE_SIMPLE is defined, which Zephyr does not define -- and that
+# path is not on the include path here, so the file fails to compile. Every other
+# font in this tree uses <lvgl.h>; match them. Caught by the ref-dial-jp build.
+python3 - "$out_dir/${OUT_NAME}.c" <<'PYEOF'
+import sys
+p = sys.argv[1]
+s = open(p).read()
+old = '#ifdef LV_LVGL_H_INCLUDE_SIMPLE\n#include "lvgl.h"\n#else\n#include "lvgl/lvgl.h"\n#endif'
+assert old in s, "lv_font_conv include block changed shape; update gen_jp_font.sh"
+open(p, 'w').write(s.replace(old, '#include <lvgl.h>'))
+PYEOF
+
 # lv_font_conv records the exact argv it was invoked with in a comment at the
 # top of the output. Those are absolute paths into a temp dir and someone's home
 # directory, so the file would differ on every machine and leak the path. Rewrite

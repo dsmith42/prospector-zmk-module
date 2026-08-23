@@ -4,11 +4,7 @@
  * Opts: --font ttf/MPLUS1-Medium.ttf --bpp 4 --size 18 --no-compress --format lvgl --symbols 基本記号数字移動配置集中マウスタイー -o MPLUS1_JP_18.c
  ******************************************************************************/
 
-#ifdef LV_LVGL_H_INCLUDE_SIMPLE
-#include "lvgl.h"
-#else
-#include "lvgl/lvgl.h"
-#endif
+#include <lvgl.h>
 
 #ifndef MPLUS1_JP_18
 #define MPLUS1_JP_18 1
