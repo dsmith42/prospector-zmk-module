@@ -23,6 +23,7 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 - [Installation](#installation)
 - [Status Screens](#status-screens)
 - [Focus Block Timer](#focus-block-timer)
+- [Themes](#themes)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Japanese Layer Names](#japanese-layer-names)
@@ -172,6 +173,69 @@ First tap does nothing, double tap starts, triple tap stops. Pairing that with a
 - **At zero it stops ticking and sits at 0** — empty dial, or empty bar on Operator. No flash, no inversion, no colour change. Deliberately identical to the pre-start state: one quiet state rather than two.
 
 State is a single absolute deadline, with remaining time recomputed from the monotonic uptime clock at render. Nothing that happens to the display affects it, and there is no drift and no clock to set. It is RAM-only: a power cycle is a fresh state, and there is no wall clock to sync.
+
+## Themes
+
+The Dial layout takes its colours from a devicetree node, so a palette is a
+keymap change rather than a module edit. Six ship in
+`prospector_adapter.overlay`:
+
+![The six dial themes](docs/images/theme-grid.svg)
+
+| Theme | `dial-wedge` |
+| ----- | ------------ |
+| `dial_amber_theme` *(default)* | `0xF7931B` |
+| `dial_teal_theme` | `0x1ABC9C` |
+| `dial_violet_theme` | `0x8E6BF7` |
+| `dial_rose_theme` | `0xF75F8C` |
+| `dial_lime_theme` | `0xA8D94A` |
+| `dial_ice_theme` | `0x5AB8F7` |
+
+Select one with a `chosen` node in your keymap or shield overlay:
+
+```dts
+/ {
+    chosen {
+        zmk,prospector-theme = &dial_teal_theme;
+    };
+};
+```
+
+With nothing chosen, `dial_amber_theme` is used.
+
+The same six with [Japanese layer names](#japanese-layer-names):
+
+![The six dial themes with Japanese layer names](docs/images/theme-grid-jp.svg)
+
+### Writing one
+
+Every property has a default in the binding, so a theme only declares what it
+changes. In practice that is one line:
+
+```dts
+dial_custom_theme: dial_custom_theme {
+    compatible = "zmk,prospector-theme";
+    dial-wedge = <0x00A3FF>;
+};
+```
+
+The hand and the armed preview are **derived** from the wedge rather than set
+per theme — `DIAL_HAND_LIFT` lifts the hand 40% toward white, `DIAL_ARMED_LEVEL`
+takes the armed preview to 45% of it, both in `layouts/dial/dial.c`. One rule
+for every palette, and a new theme cannot drift out of step with its own accents.
+
+Themes written for the Radii layout stay valid here: the properties they set
+still apply, and the dial ones fall back to their defaults.
+
+### Regenerating the previews
+
+```sh
+python3 docs/render_theme_grid.py
+python3 docs/render_theme_grid.py --layer 基本 --out docs/images/theme-grid-jp.svg
+```
+
+The grid enumerates `dial_*_theme` nodes straight out of the overlay, so adding
+a theme adds a tile with no change to the script.
 
 ## Usage
 
