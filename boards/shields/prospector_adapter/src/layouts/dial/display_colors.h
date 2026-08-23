@@ -1,61 +1,46 @@
 #pragma once
 
-#define DISPLAY_COLOR_MOD_ACTIVE       0xb1e5f0
-#define DISPLAY_COLOR_MOD_INACTIVE     0x3b527c
-#define DISPLAY_COLOR_MOD_SEPARATOR    0x606060
-#define DISPLAY_COLOR_MOD_CAPS_WORD    0xffbf00
+#include <zephyr/devicetree.h>
 
-/* Orange for the focus-block timer, not the stock red/magenta: the battery
-   arcs are already teal/green, so a green timer would compete with them.
-   Orange gives a clean split — green = status/health, orange = work in
-   progress. Single colour throughout; no depletion transition. */
-#define DISPLAY_COLOR_TIMER_BAR_ACTIVE 0xe8871e
-#define DISPLAY_COLOR_TIMER_BAR_SPENT  0x242424
-#define DISPLAY_COLOR_TIMER_TEXT       0xe8871e
+/*
+ * Colours come from a theme node in devicetree, so a user picks one without
+ * rebuilding or editing the module:
+ *
+ *   chosen { zmk,prospector-theme = &dial_teal_theme; };
+ *
+ * Six are defined in prospector_adapter.overlay. Every property has a default
+ * in the binding, so a theme only needs to set what it changes — including
+ * themes written for the RADII layout, which remain valid here.
+ */
 
-/* Dial layout. Minutes and profile are deliberately muted — diagnostics, not
-   ambient. Orange stays reserved for the dial itself. */
-/* Hand is a brighter orange than the wedge so it stays legible where it sits
-   on top of the filled remainder, rather than disappearing into it. */
-/* Three even steps: face (the whole hour) < block (the length you chose) <
-   orange (what remains). The face reuses the grey already proven readable on
-   this panel; the new colour goes where it has the most contrast to work with. */
-#define DISPLAY_COLOR_DIAL_FACE        0x242424
-#define DISPLAY_COLOR_DIAL_BLOCK       0x3a3a3a
+#if DT_HAS_CHOSEN(zmk_prospector_theme)
+#define THEME_NODE DT_CHOSEN(zmk_prospector_theme)
+#else
+#define THEME_NODE DT_NODELABEL(dial_amber_theme)
+#endif
 
-/* Armed but not started: the wedge previews the selected length in a dimmed
-   orange, so choosing a length is visible rather than a hidden mode. */
-#define DISPLAY_COLOR_DIAL_ARMED       0x6b3d0d
-#define DISPLAY_COLOR_DIAL_HAND        0xffab52
-#define DISPLAY_COLOR_DIAL_TICK        0x9a9a9a
-#define DISPLAY_COLOR_DIAL_HUB         0xd8d4cc
-#define DISPLAY_COLOR_DIAL_MINUTES     0x8a8a8a
-#define DISPLAY_COLOR_DIAL_PROFILE     0x7b7d93
-#define DISPLAY_COLOR_BATTERY_LOW_TEXT 0xff3b30
+/* Timer. One colour throughout as it depletes — no transition, because that
+   would read as a deadline and a block is progress-defined. */
+#define DISPLAY_COLOR_TIMER_BAR_ACTIVE DT_PROP(THEME_NODE, dial_wedge)
 
-#define DISPLAY_COLOR_LAYER_TEXT       0xffffff
-#define DISPLAY_COLOR_LAYER_DOT_ACTIVE   0xe0e0e0
-#define DISPLAY_COLOR_LAYER_DOT_INACTIVE 0x575757
+/* The hand and the armed preview are derived from the wedge in dial.c — see
+   DIAL_HAND_LIFT and DIAL_ARMED_LEVEL. A theme sets its wedge and gets both. */
 
-#define DISPLAY_COLOR_BATTERY_FILL     0x54806c
-#define DISPLAY_COLOR_BATTERY_RING     0x2a4036
-#define DISPLAY_COLOR_BATTERY_BG       0x505050
-#define DISPLAY_COLOR_BATTERY_LABEL    0xffffff
+/* Three even steps: face (the whole hour) < block (the length chosen) <
+   wedge (what remains). */
+#define DISPLAY_COLOR_DIAL_FACE        DT_PROP(THEME_NODE, dial_face)
+#define DISPLAY_COLOR_DIAL_BLOCK       DT_PROP(THEME_NODE, dial_block)
 
-#define DISPLAY_COLOR_BATTERY_DISCONNECTED_FILL  0x383c42
-#define DISPLAY_COLOR_BATTERY_DISCONNECTED_RING  0x282c30
-#define DISPLAY_COLOR_BATTERY_DISCONNECTED_LABEL 0x000000
+#define DISPLAY_COLOR_DIAL_TICK        DT_PROP(THEME_NODE, dial_tick)
+#define DISPLAY_COLOR_DIAL_HUB         DT_PROP(THEME_NODE, dial_hub)
+#define DISPLAY_COLOR_DIAL_MINUTES     DT_PROP(THEME_NODE, dial_minutes)
+#define DISPLAY_COLOR_DIAL_PROFILE     DT_PROP(THEME_NODE, dial_profile)
 
-#define DISPLAY_COLOR_BATTERY_LOW_FILL  0xC08040
-#define DISPLAY_COLOR_BATTERY_LOW_RING  0x584028
+/* Battery. Warning is text colour only — no badge, no flash. */
+#define DISPLAY_COLOR_BATTERY_FILL     DT_PROP(THEME_NODE, dial_battery)
+#define DISPLAY_COLOR_BATTERY_LOW_TEXT DT_PROP(THEME_NODE, dial_battery_low)
 
-#define DISPLAY_COLOR_USB_ACTIVE_BG        0xb9b9a7
-#define DISPLAY_COLOR_USB_INACTIVE_BG      0x4F4F40
-#define DISPLAY_COLOR_BLE_ACTIVE_BG        0x569FA7
-#define DISPLAY_COLOR_BLE_INACTIVE_BG      0x353f40
-#define DISPLAY_COLOR_OUTPUT_ACTIVE_TEXT   0x000000
-#define DISPLAY_COLOR_OUTPUT_INACTIVE_TEXT 0x7b7d93
-
-#define DISPLAY_COLOR_SLOT_ACTIVE_BG   0x7b7d93
-#define DISPLAY_COLOR_SLOT_INACTIVE_BG 0x353640
-#define DISPLAY_COLOR_SLOT_TEXT        0xffffff
+/* Layer and modifiers share the accent, so the diagnostics read as one family
+   distinct from the timer. */
+#define DISPLAY_COLOR_MOD_ACTIVE       DT_PROP(THEME_NODE, mod_active_color)
+#define DISPLAY_COLOR_MOD_INACTIVE     DT_PROP(THEME_NODE, mod_inactive_color)

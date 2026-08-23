@@ -30,3 +30,42 @@ properties:
   mod-inactive-color:
     type: int
     required: false
+
+  # Dial layout. Defaults keep every existing theme node valid without edits —
+  # a theme only needs to set what it wants to change.
+  dial-wedge:
+    type: int
+    required: false
+    default: 0xf7931b
+  dial-face:
+    type: int
+    required: false
+    default: 0x242424
+  dial-block:
+    type: int
+    required: false
+    default: 0x3a3a3a
+  dial-tick:
+    type: int
+    required: false
+    default: 0x9a9a9a
+  dial-hub:
+    type: int
+    required: false
+    default: 0xd8d4cc
+  dial-minutes:
+    type: int
+    required: false
+    default: 0x8a8a8a
+  dial-profile:
+    type: int
+    required: false
+    default: 0x7b7d93
+  dial-battery:
+    type: int
+    required: false
+    default: 0x54806c
+  dial-battery-low:
+    type: int
+    required: false
+    default: 0xff3b30

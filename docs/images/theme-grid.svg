@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="904" height="588" viewBox="0 0 904 588">
+<rect width="904" height="588" fill="#101010"/>
+<g transform="translate(16,16)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#f7931b"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#fabe76" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#b1e5f0">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b527c">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b527c">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b527c">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b527c">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">amber</text>
+</g>
+<g transform="translate(312,16)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#1abc9c"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#75d6c3" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#c8efe6">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#2f5a52">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#2f5a52">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#2f5a52">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#2f5a52">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">teal</text>
+</g>
+<g transform="translate(608,16)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#8e6bf7"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#bba6fa" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#d9cefb">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#4a4270">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#4a4270">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#4a4270">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#4a4270">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">violet</text>
+</g>
+<g transform="translate(16,302)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#f75f8c"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#fa9fba" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#fbd0dc">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#6e4451">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#6e4451">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#6e4451">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#6e4451">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">rose</text>
+</g>
+<g transform="translate(312,302)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#a8d94a"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#cae892" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#e1f2c0">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#53603a">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#53603a">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#53603a">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#53603a">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">lime</text>
+</g>
+<g transform="translate(608,302)">
+<rect width="280" height="240" fill="#000000" rx="10"/>
+<svg width="280" height="240" viewBox="0 0 280 240">
+<rect width="280" height="240" fill="#000000"/>
+<circle cx="107.0" cy="10.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="203.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="190.1" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="155.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="107.0" cy="202.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="189.1" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="154.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="11.0" cy="106.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="23.9" cy="58.0" r="1.5" fill="#9a9a9a"/>
+<circle cx="59.0" cy="22.9" r="1.5" fill="#9a9a9a"/>
+<circle cx="107" cy="106" r="71" fill="#242424"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 107.0 177.0 Z" fill="#3a3a3a"/>
+<path d="M 107 106 L 107 35 A 71 71 0 0 1 164.4 147.7 Z" fill="#5ab8f7"/>
+<line x1="107" y1="106" x2="167.7" y2="150.1" stroke="#9cd4fa" stroke-width="4" stroke-linecap="round"/>
+<circle cx="107" cy="106" r="8" fill="#d8d4cc"/>
+<text x="270" y="54" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="32" fill="#8a8a8a">21</text>
+<text x="270" y="174" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="20" fill="#7b7d93">B 2</text>
+<text x="234" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">87</text>
+<text x="270" y="208" text-anchor="end" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="24" fill="#54806c">89</text>
+<text x="10" y="234" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="20" fill="#cde8fb">BASE</text>
+<text x="174" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b5a6e">⌘</text>
+<text x="206" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b5a6e">⌥</text>
+<text x="238" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b5a6e">⌃</text>
+<text x="270" y="236" text-anchor="end" font-family="Inter,'Helvetica Neue',Arial,sans-serif" font-size="22" fill="#3b5a6e">⇧</text>
+</svg>
+<text x="140.0" y="261" text-anchor="middle" font-family="Inter,Helvetica,Arial,sans-serif" font-size="16" fill="#c8c8c8">ice</text>
+</g>
+</svg>
