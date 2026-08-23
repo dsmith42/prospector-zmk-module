@@ -1,6 +1,24 @@
 name: Build
 
-on: [push, pull_request, workflow_dispatch]
+# Every check used to run twice: pushing a branch that has an open PR fires
+# both `push` and `pull_request`, and this workflow listened for both.
+#
+# Direct pushes to `block-timer` are blocked by the repository ruleset, so the only
+# `push` event left here is the merge commit a PR produces. That build earns its
+# place -- it is the firmware matching what is actually flashed, and it catches
+# two PRs that were each green alone but break once combined. `pull_request`
+# covers everything before that, exactly once.
+#
+# A branch pushed with no PR open does not build. Open the PR, or use the
+# workflow_dispatch button.
+#
+# Note: the ruleset tracks ~DEFAULT_BRANCH symbolically, but `branches:` cannot
+# -- so if the default branch is ever renamed, this line needs renaming too.
+on:
+  push:
+    branches: [block-timer]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   # A ZMK module is only compiled when a keyboard config pulls it in, so CI
