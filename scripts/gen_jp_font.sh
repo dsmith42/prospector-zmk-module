@@ -60,7 +60,21 @@ p = sys.argv[1]
 s = open(p).read()
 old = '#ifdef LV_LVGL_H_INCLUDE_SIMPLE\n#include "lvgl.h"\n#else\n#include "lvgl/lvgl.h"\n#endif'
 assert old in s, "lv_font_conv include block changed shape; update gen_jp_font.sh"
-open(p, 'w').write(s.replace(old, '#include <lvgl.h>'))
+s = s.replace(old, '#include <lvgl.h>')
+
+# lv_font_conv names the include guard after the font family and the variable
+# after the output filename. For M PLUS those collide, so `#define MPLUS1_JP_18 1`
+# turns the definition below into `const lv_font_t 1 = {`. The bundled fonts dodge
+# this by accident -- FoundryGridnikMedium happens not to match FG_Medium_20 -- so
+# give the guard its own name rather than relying on the same luck.
+guard = p.rsplit('/', 1)[-1][:-2]
+safe = 'MPLUS1MEDIUM_' + guard.rsplit('_', 1)[-1]
+assert f'#define {guard} 1' in s, "guard macro changed shape; update gen_jp_font.sh"
+s = s.replace(f'#ifndef {guard}', f'#ifndef {safe}')
+s = s.replace(f'#define {guard} 1', f'#define {safe} 1')
+s = s.replace(f'#if {guard}', f'#if {safe}')
+
+open(p, 'w').write(s)
 PYEOF
 
 # lv_font_conv records the exact argv it was invoked with in a comment at the

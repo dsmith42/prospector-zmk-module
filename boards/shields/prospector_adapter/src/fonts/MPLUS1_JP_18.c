@@ -6,11 +6,11 @@
 
 #include <lvgl.h>
 
-#ifndef MPLUS1_JP_18
-#define MPLUS1_JP_18 1
+#ifndef MPLUS1MEDIUM_18
+#define MPLUS1MEDIUM_18 1
 #endif
 
-#if MPLUS1_JP_18
+#if MPLUS1MEDIUM_18
 
 /*-----------------
  *    BITMAPS
@@ -457,5 +457,5 @@ lv_font_t MPLUS1_JP_18 = {
 
 
 
-#endif /*#if MPLUS1_JP_18*/
+#endif /*#if MPLUS1MEDIUM_18*/
 
