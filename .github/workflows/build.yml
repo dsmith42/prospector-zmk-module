@@ -1,0 +1,92 @@
+name: Build
+
+on: [push, pull_request, workflow_dispatch]
+
+# The module cannot be built alone — it needs a keyboard config to be pulled
+# into. tests/reference-config is a minimal one; see tests/README.md.
+jobs:
+  targets:
+    name: collect targets
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.collect.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: collect
+        name: Read tests/reference-config/targets.yaml
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, yaml
+          with open("tests/reference-config/targets.yaml") as f:
+              targets = yaml.safe_load(f)
+          for t in targets:
+              t.setdefault("cmake-args", "")
+          print("matrix=" + json.dumps(targets))
+          PY
+      - name: Show what will be built
+        run: echo '${{ steps.collect.outputs.matrix }}'
+
+  build:
+    name: build (${{ matrix.name }})
+    needs: targets
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - name: Checkout the module
+        uses: actions/checkout@v4
+        with:
+          path: module
+
+      - name: Cache west workspace
+        uses: actions/cache@v4
+        with:
+          path: |
+            zmk
+            zephyr
+            modules
+          key: west-${{ hashFiles('module/tests/reference-config/west.yml') }}
+          restore-keys: west-
+
+      - name: Initialise the workspace
+        run: |
+          west init -l module/tests/reference-config
+          west update --fetch-opt=--filter=tree:0
+          west zephyr-export
+
+      # The module is supplied from THIS checkout rather than fetched by west.
+      # That is the whole point: west would pull whatever the branch tip is, so
+      # a pull request would be validated against its base instead of itself.
+      - name: Build ${{ matrix.name }}
+        run: |
+          west build -s zmk/app -b "${{ matrix.board }}" -- \
+            -DZMK_CONFIG="${GITHUB_WORKSPACE}/module/tests/reference-config" \
+            -DZEPHYR_EXTRA_MODULES="${GITHUB_WORKSPACE}/module" \
+            -DSHIELD="${{ matrix.shield }}" \
+            ${{ matrix['cmake-args'] }}
+
+      - name: Memory use
+        if: always()
+        run: |
+          awk '/Memory region/,/IDT_LIST/' build/build.log 2>/dev/null \
+            || west build -t ram_report -d build 2>/dev/null | head -5 \
+            || true
+
+  # Single stable check for branch protection. Matrix job names change whenever
+  # targets.yaml is edited; this one never does, so it can be required once.
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    steps:
+      - name: Fail if any reference build failed
+        if: needs.build.result != 'success'
+        run: |
+          echo "build result: ${{ needs.build.result }}"
+          exit 1

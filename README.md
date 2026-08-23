@@ -25,6 +25,7 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 - [Focus Block Timer](#focus-block-timer)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Development](#development)
 - [Troubleshooting](#troubleshooting)
 - [Known Issues](#known-issues)
 - [To-Do](#to-do)
@@ -218,6 +219,13 @@ CONFIG_PROSPECTOR_FIXED_BRIGHTNESS=80
 | `CONFIG_PROSPECTOR_ANIMATION_WPM_REFERENCE` | WPM value at which animation reaches max speed | 70 |
 | `CONFIG_PROSPECTOR_ANIMATION_INTENSITY_DECAY_SEC` | Seconds for lines to fade out after typing stops | 30 |
 | `CONFIG_PROSPECTOR_ANIMATION_FLOW_DECAY_SEC` | Seconds for line directions and length to settle | 300 |
+
+## Development
+
+The module is built on every push and pull request against a minimal reference
+keyboard config in [`tests/`](tests/README.md), covering all five status screen
+layouts. Add a build target by appending to `tests/reference-config/targets.yaml`
+— the CI matrix is generated from that file.
 
 ## Troubleshooting
 

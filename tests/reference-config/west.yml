@@ -1,0 +1,14 @@
+# Deliberately does NOT list prospector-zmk-module. CI supplies the checked-out
+# module via ZEPHYR_EXTRA_MODULES so a pull request is validated against its own
+# commit rather than against whatever the branch tip happens to be.
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: main
+      import: app/west.yml
+  self:
+    path: config
