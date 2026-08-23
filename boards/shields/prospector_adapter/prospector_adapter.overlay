@@ -6,9 +6,13 @@
    /*
     * Dial layout themes. Each sets only the timer family plus its accent;
     * everything else falls back to the defaults in the binding. Select one
-    * with a chosen node in your keymap or shield overlay:
+    * with a chosen node:
     *
     *   chosen { zmk,prospector-theme = &dial_teal_theme; };
+    *
+    * On a split, that goes in the overlay for the board with the display, not
+    * in the keymap: peripherals compile the shared keymap but not this file,
+    * so a reference from there fails them with "undefined node label".
     *
     * dial_amber_theme is the fallback when nothing is chosen.
     */

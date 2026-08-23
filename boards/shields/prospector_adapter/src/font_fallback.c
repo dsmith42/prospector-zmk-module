@@ -11,7 +11,7 @@ const lv_font_t *prospector_font_jp(const lv_font_t *base, lv_font_t *storage) {
     }
 
     *storage = *base;
-    storage->fallback = &MPLUS1_JP_18;
+    storage->fallback = &MPLUS1_JP_20;
     return storage;
 #else
     ARG_UNUSED(storage);

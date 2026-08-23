@@ -23,6 +23,7 @@ This is a [ZMK module](https://zmk.dev/docs/features/modules) that provides cust
 - [Installation](#installation)
 - [Status Screens](#status-screens)
 - [Focus Block Timer](#focus-block-timer)
+- [Themes](#themes)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Japanese Layer Names](#japanese-layer-names)
@@ -100,7 +101,7 @@ Fork-only. A focus-block countdown, rendered two ways.
 
 ![Dial layout, 21 minutes remaining of a running block](docs/images/dial-layout.svg)
 
-Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every five minutes; the hand marks the boundary in a brighter orange so it stays legible on top of the filled wedge.
+Blocks are capped at 60 minutes so the dial never wraps. Ticks are drawn every five minutes; the hand marks the boundary in a lighter shade of the theme colour — derived from it rather than set per theme — so it stays legible on top of the filled wedge.
 
 Selecting a length **arms** it without starting anything, and the dial previews it dimmed — so choosing is visible rather than a hidden mode:
 
@@ -167,11 +168,82 @@ First tap does nothing, double tap starts, triple tap stops. Pairing that with a
 ### Behaviour
 
 - **Minutes round up**, so it never reads finished with 59 seconds left.
-- **Armed length previews on the dial** in a dimmed orange before it starts, so selecting a length is visible rather than a hidden mode.
-- **One colour throughout** — orange for remaining, grey for spent. No green/amber/red transition: that reads as a deadline, and the timer is meant as pacing.
+- **Armed length previews on the dial** dimmed before it starts, so selecting a length is visible rather than a hidden mode.
+- **One colour throughout** — the theme colour for remaining, grey for spent. No green/amber/red transition: that reads as a deadline, and the timer is meant as pacing.
 - **At zero it stops ticking and sits at 0** — empty dial, or empty bar on Operator. No flash, no inversion, no colour change. Deliberately identical to the pre-start state: one quiet state rather than two.
 
 State is a single absolute deadline, with remaining time recomputed from the monotonic uptime clock at render. Nothing that happens to the display affects it, and there is no drift and no clock to set. It is RAM-only: a power cycle is a fresh state, and there is no wall clock to sync.
+
+## Themes
+
+The Dial layout takes its colours from a devicetree node, so a palette is a
+keymap change rather than a module edit. Six ship in
+`prospector_adapter.overlay`:
+
+![The six dial themes](docs/images/theme-grid.svg)
+
+| Theme | `dial-wedge` |
+| ----- | ------------ |
+| `dial_amber_theme` *(default)* | `0xF7931B` |
+| `dial_teal_theme` | `0x1ABC9C` |
+| `dial_violet_theme` | `0x8E6BF7` |
+| `dial_rose_theme` | `0xF75F8C` |
+| `dial_lime_theme` | `0xA8D94A` |
+| `dial_ice_theme` | `0x5AB8F7` |
+
+Select one with a `chosen` node:
+
+```dts
+/ {
+    chosen {
+        zmk,prospector-theme = &dial_teal_theme;
+    };
+};
+```
+
+With nothing chosen, `dial_amber_theme` is used.
+
+> **On a split keyboard, put this in the overlay for the board that has the
+> display — not in your keymap.** The theme nodes are defined in this module's
+> `prospector_adapter.overlay`, which only the display build applies. Split
+> peripherals compile the shared keymap but not that overlay, so a reference
+> from there fails them all with `undefined node label 'dial_teal_theme'`.
+> On a unibody, or anywhere the keymap is only compiled by the board carrying
+> the display, the keymap is fine.
+
+The same six with [Japanese layer names](#japanese-layer-names):
+
+![The six dial themes with Japanese layer names](docs/images/theme-grid-jp.svg)
+
+### Writing one
+
+Every property has a default in the binding, so a theme only declares what it
+changes. In practice that is one line:
+
+```dts
+dial_custom_theme: dial_custom_theme {
+    compatible = "zmk,prospector-theme";
+    dial-wedge = <0x00A3FF>;
+};
+```
+
+The hand and the armed preview are **derived** from the wedge rather than set
+per theme — `DIAL_HAND_LIFT` lifts the hand 40% toward white, `DIAL_ARMED_LEVEL`
+takes the armed preview to 45% of it, both in `layouts/dial/dial.c`. One rule
+for every palette, and a new theme cannot drift out of step with its own accents.
+
+Themes written for the Radii layout stay valid here: the properties they set
+still apply, and the dial ones fall back to their defaults.
+
+### Regenerating the previews
+
+```sh
+python3 docs/render_theme_grid.py
+python3 docs/render_theme_grid.py --layer 基本 --out docs/images/theme-grid-jp.svg
+```
+
+The grid enumerates `dial_*_theme` nodes straight out of the overlay, so adding
+a theme adds a tile with no change to the script.
 
 ## Usage
 
@@ -267,11 +339,11 @@ cost it — one kanji becomes two to six kana. The timer layer is the worst case
 ```
 集中          →   しゅうちゅう
 2 squares        6 squares
-36 px            108 px
+40 px            120 px
 ```
 
-Kanji are in fact *narrower* than the Latin they replace. At 18px each glyph
-advances 18px, so 集中 is 36px against roughly 65px for "TIMER".
+Kanji are in fact *narrower* than the Latin they replace. At 20px each glyph
+advances 20px, so 集中 is 40px against roughly 65px for "TIMER".
 
 Mixed kanji-and-katakana is also what a Japanese interface genuinely looks like;
 all-hiragana reads as children's material.
@@ -279,7 +351,7 @@ all-hiragana reads as children's material.
 ### Extending the set
 
 Only the characters actually used are baked in — currently 18 glyphs for about
-2.3 KB of flash, against roughly 550 KB for a full CJK face. To add a name, append
+2.9 KB of flash, against roughly 680 KB for a full CJK face. To add a name, append
 its characters to `SYMBOLS` in [`scripts/gen_jp_font.sh`](scripts/gen_jp_font.sh)
 and re-run it:
 
@@ -293,13 +365,14 @@ and re-run it:
 | ------ | --------- | ----------------- | ---- |
 | 16px | 14x14 | level | 32px |
 | 17px | 16x15 | level | 34px |
-| **18px** | **16x16** | **+1px** | **36px** |
+| 18px | 16x16 | +1px | 36px |
 | 19px | 17x17 | +1px | 38px |
+| **20px** | **18x18** | **+2px** | **40px** |
 
-18px is the shipped value. Matching the cap height exactly (16px) reads noticeably
-small, because kanji carry more internal detail than a Latin capital and need the
-extra body to stay legible at a glance; the 1px overshoot is deliberate. Below
-16px the strokes begin to fill in.
+20px is the shipped value, judged on hardware rather than from the numbers.
+Matching the Latin cap height exactly (16px) looks undersized: kanji carry far
+more internal detail than a Latin capital and need the extra body to read at a
+glance. Below 16px the strokes begin to fill in.
 
 Other layouts can opt in with one call — see `prospector_font_jp()` in
 [`font_fallback.h`](boards/shields/prospector_adapter/include/font_fallback.h);
