@@ -58,13 +58,22 @@ only in a dongle-side overlay fails to resolve on the halves with
 
 ## Building it locally
 
+Run this from an empty directory, not from the module checkout — `west init -l`
+roots the workspace in the *parent* of the config directory, so initialising in
+place would put it inside `tests/`.
+
 ```sh
-west init -l tests/reference-config
+MODULE=/path/to/prospector-zmk-module
+
+mkdir -p ~/zmk-ws && cd ~/zmk-ws
+cp -r "$MODULE/tests/reference-config" config
+west init -l config
 west update
 west zephyr-export
+
 west build -s zmk/app -b "xiao_ble//zmk" -- \
-  -DZMK_CONFIG="$PWD/tests/reference-config" \
-  -DZEPHYR_EXTRA_MODULES="$PWD" \
+  -DZMK_CONFIG="$PWD/config" \
+  -DZEPHYR_EXTRA_MODULES="$MODULE" \
   -DSHIELD="ref_dongle prospector_adapter" \
   -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y
 ```

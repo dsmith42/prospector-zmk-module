@@ -53,9 +53,13 @@ jobs:
           key: west-${{ hashFiles('module/tests/reference-config/west.yml') }}
           restore-keys: west-
 
+      # west puts .west in the PARENT of the -l directory, so the reference
+      # config is staged as a direct child of the workspace root. Initialising
+      # it in place would root the workspace inside module/tests/.
       - name: Initialise the workspace
         run: |
-          west init -l module/tests/reference-config
+          cp -r module/tests/reference-config config
+          west init -l config
           west update --fetch-opt=--filter=tree:0
           west zephyr-export
 
@@ -65,7 +69,7 @@ jobs:
       - name: Build ${{ matrix.name }}
         run: |
           west build -s zmk/app -b "${{ matrix.board }}" -- \
-            -DZMK_CONFIG="${GITHUB_WORKSPACE}/module/tests/reference-config" \
+            -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" \
             -DZEPHYR_EXTRA_MODULES="${GITHUB_WORKSPACE}/module" \
             -DSHIELD="${{ matrix.shield }}" \
             ${{ matrix['cmake-args'] }}
