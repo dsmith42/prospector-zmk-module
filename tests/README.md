@@ -7,21 +7,21 @@ exercises this one, and CI builds it on every push and pull request.
 ```
 reference-config/
 ├── west.yml                       ZMK only — see "How the module is supplied"
-├── targets.yaml                   what CI builds; add entries here
+├── build.yaml                     what CI builds; add entries here
 ├── ref.keymap                     binds every behaviour this module adds
 └── boards/shields/ref_dongle/     a keyless split central for the display
 ```
 
 ## Adding a build target
 
-Append to `targets.yaml`. No workflow changes are needed — the matrix is
-generated from this file.
+Append to `build.yaml`, which is ZMK's standard build matrix format. No
+workflow changes are needed.
 
 ```yaml
-- name: my-target          # appears in the check name; short and unique
-  board: xiao_ble//zmk     # any ZMK board target
-  shield: ref_dongle prospector_adapter
-  cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y   # optional
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y   # optional
+    artifact-name: ref-dial
 ```
 
 All five status screen layouts are built by default, so a change to shared code
@@ -33,16 +33,16 @@ discoverable from the directory structure.
 
 ## How the module is supplied
 
-`west.yml` deliberately does **not** list `prospector-zmk-module`. CI passes the
-checked-out module with `ZEPHYR_EXTRA_MODULES` instead.
+`west.yml` deliberately does **not** list `prospector-zmk-module`.
+
+ZMK's `build-user-config.yml` detects that this repo is itself a module — it
+looks for `zephyr/module.yml` at the root — and then passes the checkout as
+`ZMK_EXTRA_MODULES`, building in an isolated workspace so the module is not
+inside the workspace it is being added to.
 
 This matters. If west fetched the module by branch, a pull request would be
-validated against whatever that branch's tip happens to be — that is, against
-its own base rather than against itself — and a broken pull request would go
-green. Supplying the checkout directly is what makes the check meaningful.
-
-The same reasoning is why this workflow is hand written rather than using ZMK's
-`build-user-config.yml`: that workflow assumes west owns every dependency.
+validated against whatever that branch's tip happens to be — its own base
+rather than itself — and a broken pull request would go green.
 
 ## What `ref.keymap` is for
 
