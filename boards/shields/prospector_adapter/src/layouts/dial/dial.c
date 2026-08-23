@@ -13,6 +13,34 @@
 #include <fonts.h>
 #include "display_colors.h"
 
+/* The hand and the armed preview are derived from the wedge colour rather than
+ * set per theme: one rule for every palette, nothing to drift, and a new theme
+ * only has to declare its wedge. */
+#define DIAL_HAND_LIFT 40   /* percent toward white */
+#define DIAL_ARMED_LEVEL 45 /* percent of the wedge */
+
+static uint32_t lighten(uint32_t c, int pct) {
+    uint32_t r = (c >> 16) & 0xff, g = (c >> 8) & 0xff, b = c & 0xff;
+
+    r += ((255 - r) * pct) / 100;
+    g += ((255 - g) * pct) / 100;
+    b += ((255 - b) * pct) / 100;
+
+    return (r << 16) | (g << 8) | b;
+}
+
+static uint32_t scale(uint32_t c, int pct) {
+    uint32_t r = (((c >> 16) & 0xff) * pct) / 100;
+    uint32_t g = (((c >> 8) & 0xff) * pct) / 100;
+    uint32_t b = ((c & 0xff) * pct) / 100;
+
+    return (r << 16) | (g << 8) | b;
+}
+
+#define DIAL_WEDGE_COLOR DISPLAY_COLOR_TIMER_BAR_ACTIVE
+#define DIAL_HAND_COLOR lighten(DIAL_WEDGE_COLOR, DIAL_HAND_LIFT)
+#define DIAL_ARMED_COLOR scale(DIAL_WEDGE_COLOR, DIAL_ARMED_LEVEL)
+
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static struct k_work_delayable dial_tick_work;
 
@@ -44,16 +72,16 @@ static void dial_render(int disc_track, int disc_fill, int ring_track, int ring_
     struct zmk_widget_dial *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         if ((int)armed_preview != prev_armed) {
-            uint32_t wedge = armed_preview ? DISPLAY_COLOR_DIAL_ARMED
+            uint32_t wedge = armed_preview ? DIAL_ARMED_COLOR
                                            : DISPLAY_COLOR_TIMER_BAR_ACTIVE;
             lv_obj_set_style_arc_color(widget->arc, lv_color_hex(wedge), LV_PART_INDICATOR);
             lv_obj_set_style_arc_color(widget->ring, lv_color_hex(wedge), LV_PART_INDICATOR);
             lv_obj_set_style_line_color(widget->hand,
-                                        lv_color_hex(armed_preview ? DISPLAY_COLOR_DIAL_ARMED
-                                                                   : DISPLAY_COLOR_DIAL_HAND),
+                                        lv_color_hex(armed_preview ? DIAL_ARMED_COLOR
+                                                                   : DIAL_HAND_COLOR),
                                         LV_PART_MAIN);
             lv_obj_set_style_text_color(widget->minutes_label,
-                                        lv_color_hex(armed_preview ? DISPLAY_COLOR_DIAL_ARMED
+                                        lv_color_hex(armed_preview ? DIAL_ARMED_COLOR
                                                                    : DISPLAY_COLOR_DIAL_MINUTES),
                                         LV_PART_MAIN);
         }
@@ -257,7 +285,7 @@ int zmk_widget_dial_init(struct zmk_widget_dial *widget, lv_obj_t *parent) {
     lv_line_set_points(widget->hand, widget->hand_points, 2);
     lv_obj_set_style_line_width(widget->hand, 4, LV_PART_MAIN);
     lv_obj_set_style_line_rounded(widget->hand, true, LV_PART_MAIN);
-    lv_obj_set_style_line_color(widget->hand, lv_color_hex(DISPLAY_COLOR_DIAL_HAND), LV_PART_MAIN);
+    lv_obj_set_style_line_color(widget->hand, lv_color_hex(DIAL_HAND_COLOR), LV_PART_MAIN);
 
     widget->hub = lv_obj_create(widget->obj);
     lv_obj_set_size(widget->hub, DIAL_HUB_R * 2, DIAL_HUB_R * 2);

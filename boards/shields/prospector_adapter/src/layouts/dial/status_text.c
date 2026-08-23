@@ -205,7 +205,7 @@ int zmk_widget_status_text_init(struct zmk_widget_status_text *widget, lv_obj_t 
     static const char *const mod_glyphs[STATUS_MOD_COUNT] = {
         SYMBOL_COMMAND, SYMBOL_OPTION, SYMBOL_CONTROL, SYMBOL_SHIFT};
     for (int i = 0; i < STATUS_MOD_COUNT; i++) {
-        widget->mods[i] = make_label(widget->obj, &Symbols_Regular_28,
+        widget->mods[i] = make_label(widget->obj, &Symbols_Bold_26,
                                      DISPLAY_COLOR_MOD_INACTIVE, mod_glyphs[i],
                                      LV_ALIGN_BOTTOM_RIGHT,
                                      -10 - (STATUS_MOD_COUNT - 1 - i) * 32, -2);

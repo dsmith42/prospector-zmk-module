@@ -1,0 +1,32 @@
+# CI build targets, in ZMK's standard build matrix format. Add an entry here to
+# have it built on every push and pull request — no workflow changes needed.
+#
+# All five status screen layouts are built so a change to shared code (fonts,
+# symbols, the status screen dispatch) cannot break one layout while another
+# still compiles.
+---
+include:
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y
+    artifact-name: ref-dial
+
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_OPERATOR=y
+    artifact-name: ref-operator
+
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_CLASSIC=y
+    artifact-name: ref-classic
+
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_RADII=y
+    artifact-name: ref-radii
+
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_FIELD=y
+    artifact-name: ref-field

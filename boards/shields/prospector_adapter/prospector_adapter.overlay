@@ -3,6 +3,58 @@
       zephyr,display = &st7789;
    };
 
+   /*
+    * Dial layout themes. Each sets only the timer family plus its accent;
+    * everything else falls back to the defaults in the binding. Select one
+    * with a chosen node in your keymap or shield overlay:
+    *
+    *   chosen { zmk,prospector-theme = &dial_teal_theme; };
+    *
+    * dial_amber_theme is the fallback when nothing is chosen.
+    */
+
+   dial_amber_theme: dial_amber_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0xF7931B>;
+      mod-active-color = <0xB1E5F0>;
+      mod-inactive-color = <0x3B527C>;
+   };
+
+   dial_teal_theme: dial_teal_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0x1ABC9C>;
+      mod-active-color = <0xC8EFE6>;
+      mod-inactive-color = <0x2F5A52>;
+   };
+
+   dial_violet_theme: dial_violet_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0x8E6BF7>;
+      mod-active-color = <0xD9CEFB>;
+      mod-inactive-color = <0x4A4270>;
+   };
+
+   dial_rose_theme: dial_rose_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0xF75F8C>;
+      mod-active-color = <0xFBD0DC>;
+      mod-inactive-color = <0x6E4451>;
+   };
+
+   dial_lime_theme: dial_lime_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0xA8D94A>;
+      mod-active-color = <0xE1F2C0>;
+      mod-inactive-color = <0x53603A>;
+   };
+
+   dial_ice_theme: dial_ice_theme {
+      compatible = "zmk,prospector-theme";
+      dial-wedge = <0x5AB8F7>;
+      mod-active-color = <0xCDE8FB>;
+      mod-inactive-color = <0x3B5A6E>;
+   };
+
    prospector_green_theme: prospector_green_theme {
       compatible = "zmk,prospector-theme";
       left-panel-bg = <0x0D2C26>;

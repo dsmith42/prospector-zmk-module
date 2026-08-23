@@ -36,11 +36,78 @@ def define(text, name, cast=int):
     return v
 
 
-def colour(name):
-    m = re.search(rf"#define\s+{name}\s+0x([0-9a-fA-F]+)", src("display_colors.h"))
+ADAPTER = ROOT / "boards/shields/prospector_adapter"
+BINDING = ROOT / "dts/bindings/zmk,prospector-theme.yaml"
+OVERLAY = ADAPTER / "prospector_adapter.overlay"
+
+
+def _theme_defaults():
+    """Property defaults, straight out of the devicetree binding."""
+    text = BINDING.read_text()
+    out, prop = {}, None
+    for line in text.splitlines():
+        m = re.match(r"\s{2}([a-z0-9-]+):\s*$", line)
+        if m:
+            prop = m.group(1)
+        d = re.match(r"\s+default:\s*(0x[0-9a-fA-F]+)", line)
+        if d and prop:
+            out[prop] = int(d.group(1), 16)
+    return out
+
+
+def _theme_props(theme):
+    """Properties a theme node overrides, from the adapter overlay."""
+    text = OVERLAY.read_text()
+    m = re.search(rf"{theme}:\s*{theme}\s*{{(.*?)}};", text, re.S)
     if not m:
-        raise SystemExit(f"could not parse {name}")
-    return "#" + m.group(1).zfill(6)
+        raise SystemExit(f"no theme node '{theme}' in {OVERLAY.name}")
+    return {k: int(v, 16) for k, v in
+            re.findall(r"([a-z0-9-]+)\s*=\s*<(0x[0-9a-fA-F]+)>", m.group(1))}
+
+
+# Colours now live in devicetree rather than #defines, so the mock resolves a
+# theme exactly as the firmware does: node overrides on top of binding defaults.
+THEME = {}
+
+
+DIAL_HAND_LIFT = 40    # keep in step with dial.c
+DIAL_ARMED_LEVEL = 45
+
+
+def _lighten(c, pct):
+    r, g, b = (c >> 16) & 0xFF, (c >> 8) & 0xFF, c & 0xFF
+    return (((r + (255 - r) * pct // 100) << 16)
+            | ((g + (255 - g) * pct // 100) << 8)
+            | (b + (255 - b) * pct // 100))
+
+
+def _scale(c, pct):
+    return ((((c >> 16) & 0xFF) * pct // 100) << 16) \
+        | ((((c >> 8) & 0xFF) * pct // 100) << 8) | ((c & 0xFF) * pct // 100)
+
+
+def colour(name):
+    """Map a DISPLAY_COLOR_* name to its theme property."""
+    if name == "DISPLAY_COLOR_DIAL_HAND":
+        return "#%06x" % _lighten(THEME["dial-wedge"], DIAL_HAND_LIFT)
+    if name == "DISPLAY_COLOR_DIAL_ARMED":
+        return "#%06x" % _scale(THEME["dial-wedge"], DIAL_ARMED_LEVEL)
+    prop = {
+        "DISPLAY_COLOR_TIMER_BAR_ACTIVE": "dial-wedge",
+        "DISPLAY_COLOR_DIAL_FACE": "dial-face",
+        "DISPLAY_COLOR_DIAL_BLOCK": "dial-block",
+        "DISPLAY_COLOR_DIAL_TICK": "dial-tick",
+        "DISPLAY_COLOR_DIAL_HUB": "dial-hub",
+        "DISPLAY_COLOR_DIAL_MINUTES": "dial-minutes",
+        "DISPLAY_COLOR_DIAL_PROFILE": "dial-profile",
+        "DISPLAY_COLOR_BATTERY_FILL": "dial-battery",
+        "DISPLAY_COLOR_BATTERY_LOW_TEXT": "dial-battery-low",
+        "DISPLAY_COLOR_MOD_ACTIVE": "mod-active-color",
+        "DISPLAY_COLOR_MOD_INACTIVE": "mod-inactive-color",
+    }[name]
+    if prop not in THEME:
+        raise SystemExit(f"theme has no value for {prop}")
+    return "#%06x" % THEME[prop]
 
 
 h = (D / "dial.h").read_text()
@@ -111,6 +178,7 @@ def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=Fal
                 f'{CY + r*math.sin(ang):.1f} Z" fill="{fill}"/>')
 
     def ring(r, f, stroke, w):
+        r = r - w / 2  # LVGL draws the stroke inward of the radius
         if f <= 0:
             return ""
         if f >= 1:
@@ -156,7 +224,7 @@ def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=Fal
     for i, (flag, glyph) in enumerate((("G", "\u2318"), ("A", "\u2325"),
                                        ("C", "\u2303"), ("S", "\u21e7"))):
         o.append(f'<text x="{PANEL_W-10-(3-i)*32}" y="{PANEL_H-4}" text-anchor="end" '
-                 f'font-family="{sans}" font-size="24" '
+                 f'font-family="{sans}" font-size="22" '
                  f'fill="{mod_on if flag in mods else mod_off}">{glyph}</text>')
 
     o.append("</svg>")
@@ -174,8 +242,13 @@ if __name__ == "__main__":
     ap.add_argument("--usb", action="store_true", help="show USB instead of a BLE profile")
     ap.add_argument("--armed", action="store_true",
                     help="armed but not started: dimmed preview of the selected length")
+    ap.add_argument("--theme", default="dial_amber_theme",
+                    help="theme node from prospector_adapter.overlay")
     ap.add_argument("--out", default="docs/images/dial-layout.svg")
     a = ap.parse_args()
+    THEME.update(_theme_defaults())
+    THEME.update(_theme_props(a.theme))
+
     out = ROOT / a.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render(a.minutes, a.total or a.minutes, a.layer, a.battery, a.profile, a.mods, a.usb, a.armed))
