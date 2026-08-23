@@ -339,11 +339,11 @@ cost it — one kanji becomes two to six kana. The timer layer is the worst case
 ```
 集中          →   しゅうちゅう
 2 squares        6 squares
-36 px            108 px
+40 px            120 px
 ```
 
-Kanji are in fact *narrower* than the Latin they replace. At 18px each glyph
-advances 18px, so 集中 is 36px against roughly 65px for "TIMER".
+Kanji are in fact *narrower* than the Latin they replace. At 20px each glyph
+advances 20px, so 集中 is 40px against roughly 65px for "TIMER".
 
 Mixed kanji-and-katakana is also what a Japanese interface genuinely looks like;
 all-hiragana reads as children's material.
@@ -351,7 +351,7 @@ all-hiragana reads as children's material.
 ### Extending the set
 
 Only the characters actually used are baked in — currently 18 glyphs for about
-2.3 KB of flash, against roughly 550 KB for a full CJK face. To add a name, append
+2.9 KB of flash, against roughly 680 KB for a full CJK face. To add a name, append
 its characters to `SYMBOLS` in [`scripts/gen_jp_font.sh`](scripts/gen_jp_font.sh)
 and re-run it:
 
@@ -365,13 +365,14 @@ and re-run it:
 | ------ | --------- | ----------------- | ---- |
 | 16px | 14x14 | level | 32px |
 | 17px | 16x15 | level | 34px |
-| **18px** | **16x16** | **+1px** | **36px** |
+| 18px | 16x16 | +1px | 36px |
 | 19px | 17x17 | +1px | 38px |
+| **20px** | **18x18** | **+2px** | **40px** |
 
-18px is the shipped value. Matching the cap height exactly (16px) reads noticeably
-small, because kanji carry more internal detail than a Latin capital and need the
-extra body to stay legible at a glance; the 1px overshoot is deliberate. Below
-16px the strokes begin to fill in.
+20px is the shipped value, judged on hardware rather than from the numbers.
+Matching the Latin cap height exactly (16px) looks undersized: kanji carry far
+more internal detail than a Latin capital and need the extra body to read at a
+glance. Below 16px the strokes begin to fill in.
 
 Other layouts can opt in with one call — see `prospector_font_jp()` in
 [`font_fallback.h`](boards/shields/prospector_adapter/include/font_fallback.h);
