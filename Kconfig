@@ -93,3 +93,20 @@ config PROSPECTOR_LAYER_NAME_UPPERCASE
     default y
     help
       When enabled, layer names will be converted to uppercase for display.
+      Only ASCII is affected; Japanese and other non-Latin names pass through
+      unchanged, since they have no case to convert.
+
+config PROSPECTOR_LAYER_FONT_JP
+    bool "Japanese glyphs for layer names"
+    default n
+    help
+      Adds a small Japanese subset font as an LVGL fallback behind the layer
+      label, so a keymap can set display-name to something like 基本 or 集中.
+
+      Only the characters actually needed are baked in -- currently 18 glyphs
+      for roughly 1.7 KB of flash, against about 450 KB for a full CJK face.
+      Extend the set by editing SYMBOLS in scripts/gen_jp_font.sh and re-running
+      it; see the layer name table in README.md.
+
+      Kanji are also narrower than the Latin they replace: 集中 is 32px where
+      "TIMER" is around 65px.

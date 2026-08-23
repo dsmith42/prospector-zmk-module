@@ -1,6 +1,12 @@
 if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
   zephyr_library()
   file(GLOB font_sources src/fonts/*.c)
+
+  # The Japanese subset is opt-in, so keep it out of the link entirely when it
+  # is off rather than relying on the linker to drop an unreferenced font.
+  if(NOT CONFIG_PROSPECTOR_LAYER_FONT_JP)
+    list(FILTER font_sources EXCLUDE REGEX "MPLUS1_JP_[0-9]+\\.c$")
+  endif()
   zephyr_library_sources(${ZEPHYR_BASE}/misc/empty_file.c)
   zephyr_library_include_directories(${ZEPHYR_LVGL_MODULE_DIR})
   zephyr_library_include_directories(${ZEPHYR_BASE}/lib/gui/lvgl/)
@@ -12,6 +18,7 @@ if(CONFIG_SHIELD_PROSPECTOR_ADAPTER)
   zephyr_library_sources(src/brightness.c)
   zephyr_library_sources(src/custom_status_screen.c)
   zephyr_library_sources(src/display_rotate_init.c)
+  zephyr_library_sources(src/font_fallback.c)
 
   if(CONFIG_PROSPECTOR_SHOW_MODIFIERS)
     zephyr_library_sources(src/modifier_order.c)

@@ -216,7 +216,13 @@ def render(minutes_left, total, layer, batt, profile, mods, usb=False, armed=Fal
         o.append(f'<text x="{PANEL_W+dx}" y="{184+24}" text-anchor="end" font-family="{mono}" '
                  f'font-size="24" fill="{low_col if pct < LOW else batt_col}">{pct}</text>')
 
-    o.append(f'<text x="10" y="{PANEL_H-6}" font-family="{sans}" font-size="20" '
+    # Japanese layer names come from the MPLUS1_JP_16 fallback rather than the
+    # 20px Latin face. That is not a mismatch: at 16px an M PLUS glyph box is
+    # 14px tall, which is exactly the cap height of FG_Medium_20, so the two
+    # scripts share a visual line. Mirror that here or the mock overstates how
+    # large the kanji look on the panel.
+    layer_px = 16 if any(ord(c) > 0x7F for c in layer) else 20
+    o.append(f'<text x="10" y="{PANEL_H-6}" font-family="{sans}" font-size="{layer_px}" '
              f'fill="{mod_on}">{layer}</text>')
     # The firmware draws private-use glyphs from the bundled Symbols font, which
     # cannot be reproduced here — these Unicode equivalents are indicative of

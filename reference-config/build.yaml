@@ -3,7 +3,8 @@
 #
 # All five status screen layouts are built so a change to shared code (fonts,
 # symbols, the status screen dispatch) cannot break one layout while another
-# still compiles.
+# still compiles. The dial is built twice, once with the Japanese fallback font
+# linked in, so an option that is off by default is still covered.
 ---
 include:
   - board: xiao_ble//zmk
@@ -30,3 +31,11 @@ include:
     shield: ref_dongle prospector_adapter
     cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_FIELD=y
     artifact-name: ref-field
+
+  # Same layout as ref-dial, but with the Japanese fallback font linked in, so
+  # a change to the font or the fallback helper is caught even though the
+  # option is off by default.
+  - board: xiao_ble//zmk
+    shield: ref_dongle prospector_adapter
+    cmake-args: -DCONFIG_PROSPECTOR_STATUS_SCREEN_DIAL=y -DCONFIG_PROSPECTOR_LAYER_FONT_JP=y
+    artifact-name: ref-dial-jp
